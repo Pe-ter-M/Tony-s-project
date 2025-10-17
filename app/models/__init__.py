@@ -1,5 +1,5 @@
 from app import db, login_manager
-from app.models.user import User, Role
+from app.models.user import User
 from app.models.product import Product, Category
 from app.models.stock import StockIn, StockOut, Inventory
 

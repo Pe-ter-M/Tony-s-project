@@ -2,12 +2,11 @@ from app import db, login_manager
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+import enum
 
-class Role(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), unique=True, nullable=False)
-    description = db.Column(db.String(200))
-    users = db.relationship('User', backref='role', lazy=True)
+class UserRole(enum.Enum):
+    ADMIN = 'admin'
+    STAFF = 'staff'
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -16,9 +15,9 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     first_name = db.Column(db.String(64))
     last_name = db.Column(db.String(64))
-    is_active = db.Column(db.Boolean, default=True)
+    role = db.Column(db.Enum(UserRole), nullable=False, default=UserRole.STAFF)
+    active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    role_id = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=False)
     
     # Relationships
     stock_ins = db.relationship('StockIn', backref='user', lazy=True)
@@ -31,10 +30,17 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
     
     def is_admin(self):
-        return self.role.name == 'admin'
+        return self.role == UserRole.ADMIN
     
     def is_staff(self):
-        return self.role.name == 'staff'
+        return self.role == UserRole.STAFF
+    
+    def get_role_name(self):
+        return self.role.value
+    
+    @staticmethod
+    def get_role_choices():
+        return [(role.value, role.value.capitalize()) for role in UserRole]
     
     def __repr__(self):
-        return f'<User {self.username}>'
+        return f'<User {self.username} ({self.role.value})>'
