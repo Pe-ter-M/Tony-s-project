@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Inventory Management{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">
+                Welcome to Inventory Manager
+            </h1>
+            <p class="text-xl text-gray-600 mb-8">
+                Hello, {{ first_name }}! Ready to manage your inventory?
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold mb-2">Products</h3>
+                    <p class="text-gray-600 mb-4">Manage your product catalog</p>
+                    <button class="btn-primary opacity-50 cursor-not-allowed" disabled>
+                        Coming Soon
+                    </button>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold mb-2">Inventory</h3>
+                    <p class="text-gray-600 mb-4">Track stock levels</p>
+                    <button class="btn-primary opacity-50 cursor-not-allowed" disabled>
+                        Coming Soon
+                    </button>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold mb-2">Dashboard</h3>
+                    <p class="text-gray-600 mb-4">See analytics and reports</p>
+                    <button class="btn-primary">
+                        View Dashboard
+                    </button>
+                </div>
+            </div>
+
+            <!-- Logout Button -->
+            <div class="mt-8">
+                <button  class="text-red-600 hover:text-red-800 font-medium">
+                    Logout
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
