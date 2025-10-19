@@ -1,7 +1,7 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_login import LoginManager,current_user
+from flask_login import LoginManager, current_user, login_required
 from config import config
 import os
 
@@ -22,26 +22,21 @@ def create_app(config_name=None):
     login_manager.init_app(app)
     
     # Login configuration
-    login_manager.login_view = 'auth.login'
+    login_manager.login_view = 'auth.login'  # type: ignore
     login_manager.login_message_category = 'info'
+    
+    # Import and register user loader
+    from app.models.user import load_user
+    # The @login_manager.user_loader decorator in user.py handles this
     
     # Register blueprints
     from app.auth import bp as auth_bp
     app.register_blueprint(auth_bp, url_prefix='/auth')
     
-    # Comment out other blueprints until we create them
-    # from app.products import bp as products_bp
-    # app.register_blueprint(products_bp, url_prefix='/products')
-    
-    # from app.inventory import bp as inventory_bp
-    # app.register_blueprint(inventory_bp, url_prefix='/inventory')
-    
-    # from app.dashboard import bp as dashboard_bp
-    # app.register_blueprint(dashboard_bp)
-    
-    # Main index route - redirect to dashboard (will be protected)
+    # Main index route - protected
     @app.route('/')
+    @login_required
     def index():
-        return render_template('index.html', user= current_user)
+        return render_template('index.html', user=current_user)
     
     return app

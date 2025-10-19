@@ -44,3 +44,8 @@ class User(UserMixin, db.Model):
     
     def __repr__(self):
         return f'<User {self.username} ({self.role.value})>'
+
+# THIS is what makes current_user work:
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
