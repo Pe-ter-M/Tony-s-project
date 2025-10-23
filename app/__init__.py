@@ -32,10 +32,12 @@ def create_app(config_name=None):
     # Register blueprints
     from app.auth import bp as auth_bp
     from app.store import store_bp
+    from app.dashboard import dashboard_bp
 
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(store_bp, url_prefix='/store')
-    
+    app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
+
     # Main index route - protected
     @app.route('/')
     @login_required
