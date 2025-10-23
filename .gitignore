@@ -217,6 +217,7 @@ logs/
 /instance/*.db
 
 # Flask-Migrate
+migrations
 migrations/versions/*.py
 !migrations/versions/.keep
 
