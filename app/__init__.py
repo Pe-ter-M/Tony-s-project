@@ -34,7 +34,7 @@ def create_app(config_name=None):
     from app.store import store_bp
 
     app.register_blueprint(auth_bp, url_prefix='/auth')
-    app.register_blueprint(store_bp)
+    app.register_blueprint(store_bp, url_prefix='/store')
     
     # Main index route - protected
     @app.route('/')
