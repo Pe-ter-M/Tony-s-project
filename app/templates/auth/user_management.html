@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}User Management{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">User Management</h1>
+        <a href="{{ url_for('auth.register') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+            <i class="fas fa-plus fa-sm text-white-50"></i> Add New User
+        </a>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">All Users</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.first_name }} {{ user.last_name }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>
+                                <span class="badge badge-{{ 'primary' if user.role.value == 'admin' else 'secondary' }}">
+                                    {{ user.role.value|title }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge badge-{{ 'success' if user.active else 'danger' }}">
+                                    {{ 'Active' if user.active else 'Inactive' }}
+                                </span>
+                            </td>
+                            <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{{ url_for('auth.edit_user', user_id=user.id) }}" 
+                                       class="btn btn-sm btn-primary">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    {% if current_user.id != user.id %}
+                                    <button type="button" 
+                                            class="btn btn-sm btn-{{ 'warning' if user.active else 'success' }} toggle-user"
+                                            data-user-id="{{ user.id }}"
+                                            data-user-name="{{ user.username }}">
+                                        <i class="fas fa-{{ 'ban' if user.active else 'check' }}"></i>
+                                        {{ 'Deactivate' if user.active else 'Activate' }}
+                                    </button>
+                                    <form action="{{ url_for('auth.delete_user', user_id=user.id) }}" 
+                                          method="POST" 
+                                          class="d-inline"
+                                          onsubmit="return confirm('Are you sure you want to delete {{ user.username }}? This action cannot be undone.');">
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    $('.toggle-user').click(function() {
+        const userId = $(this).data('user-id');
+        const userName = $(this).data('user-name');
+        const button = $(this);
+        
+        if (confirm(`Are you sure you want to ${button.text().trim()} ${userName}?`)) {
+            $.ajax({
+                url: '{{ url_for("auth.toggle_user", user_id=0) }}'.replace('/0/', '/' + userId + '/'),
+                type: 'POST',
+                success: function(response) {
+                    if (response.success) {
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function() {
+                    alert('An error occurred while updating user status.');
+                }
+            });
+        }
+    });
+});
+</script>
+{% endblock %}
