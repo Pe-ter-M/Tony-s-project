@@ -34,20 +34,6 @@
                 {% endif %}
                 
                 <div class="space-y-2 text-sm text-gray-600">
-                    {% if product.category %}
-                    <div class="flex items-center">
-                        <i class="fas fa-tag mr-2 text-gray-400"></i>
-                        <span>{{ product.category }}</span>
-                    </div>
-                    {% endif %}
-                    
-                    {% if product.sku %}
-                    <div class="flex items-center">
-                        <i class="fas fa-barcode mr-2 text-gray-400"></i>
-                        <span>SKU: {{ product.sku }}</span>
-                    </div>
-                    {% endif %}
-                    
                     <div class="flex items-center">
                         <i class="fas fa-calendar mr-2 text-gray-400"></i>
                         <span>Added: {{ product.created_at.strftime('%Y-%m-%d') }}</span>

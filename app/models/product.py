@@ -5,8 +5,6 @@ class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False, unique=True)
     description = db.Column(db.Text)
-    category = db.Column(db.String(50))
-    sku = db.Column(db.String(50), unique=True)  # Stock Keeping Unit
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relationships
@@ -20,9 +18,9 @@ class Product(db.Model):
 class StockIn(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     quantity = db.Column(db.Integer, nullable=False)
-    buying_cost = db.Column(db.Float, nullable=False)  # Cost per unit
+    buying_cost = db.Column(db.Float, nullable=False)  # Cost per unit when buying
     total_cost = db.Column(db.Float, nullable=False)  # quantity * buying_cost
-    selling_price = db.Column(db.Float, nullable=False)  # Selling price per unit
+    selling_price = db.Column(db.Float, nullable=False)  # Intended selling price
     date_received = db.Column(db.DateTime, default=datetime.utcnow)
     notes = db.Column(db.Text)
     
@@ -39,9 +37,9 @@ class StockIn(db.Model):
 class StockOut(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     quantity_sold = db.Column(db.Integer, nullable=False)
-    selling_price = db.Column(db.Float, nullable=False)  # Actual selling price
+    selling_price = db.Column(db.Float, nullable=False)  # Use existing selling_price column for actual sale price
     total_sale = db.Column(db.Float, nullable=False)  # quantity_sold * selling_price
-    profit = db.Column(db.Float, nullable=False)  # Auto-calculated profit
+    profit = db.Column(db.Float, nullable=False)  # Auto-calculated profit (selling_price - buying_cost) * quantity
     date_sold = db.Column(db.DateTime, default=datetime.utcnow)
     customer_info = db.Column(db.String(200))
     notes = db.Column(db.Text)
@@ -51,7 +49,7 @@ class StockOut(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     
     def calculate_profit(self, buying_cost):
-        """Calculate profit based on buying cost and selling price"""
+        """Calculate profit based on buying cost and selling price (SP - BP) * quantity"""
         self.profit = (self.selling_price - buying_cost) * self.quantity_sold
     
     def calculate_total_sale(self):
@@ -63,7 +61,7 @@ class StockOut(db.Model):
 class Inventory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     current_quantity = db.Column(db.Integer, default=0)
-    total_investment = db.Column(db.Float, default=0.0)  # Total money invested in current stock
+    total_investment = db.Column(db.Float, default=0.0)
     average_buying_cost = db.Column(db.Float, default=0.0)
     last_updated = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
@@ -72,7 +70,6 @@ class Inventory(db.Model):
     
     def update_stock_in(self, quantity, buying_cost):
         """Update inventory when stock comes in"""
-        # Update average buying cost
         total_value = (self.current_quantity * self.average_buying_cost) + (quantity * buying_cost)
         self.current_quantity += quantity
         if self.current_quantity > 0:

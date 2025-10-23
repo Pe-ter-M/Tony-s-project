@@ -52,25 +52,6 @@
                     {{ form.description(class="w-full shadow appearance-none border rounded py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500", rows="4", placeholder="Enter product description (optional)") }}
                 </div>
 
-                <!-- Category and SKU -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Category -->
-                    <div>
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="category">
-                            {{ form.category.label }}
-                        </label>
-                        {{ form.category(class="w-full shadow appearance-none border rounded py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500", placeholder="e.g., Electronics") }}
-                    </div>
-
-                    <!-- SKU -->
-                    <div>
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="sku">
-                            {{ form.sku.label }}
-                        </label>
-                        {{ form.sku(class="w-full shadow appearance-none border rounded py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500", placeholder="e.g., PROD-001") }}
-                    </div>
-                </div>
-
                 <!-- Submit Buttons -->
                 <div class="flex flex-col sm:flex-row items-center justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-200">
                     <a href="{{ url_for('store.products') }}" 

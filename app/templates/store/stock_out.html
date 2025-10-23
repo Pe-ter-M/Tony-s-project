@@ -44,6 +44,7 @@
                     {% else %}
                         {{ form.product_id(class="w-full shadow appearance-none border rounded py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500") }}
                     {% endif %}
+                    <p class="text-gray-500 text-xs mt-1">Only products with available stock are shown</p>
                 </div>
 
                 <!-- Product Info (will be populated by JavaScript) -->
@@ -202,7 +203,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const totalSale = quantity * sellingPrice;
         totalSaleElement.textContent = `$${totalSale.toFixed(2)}`;
 
-        // Calculate estimated profit
+        // Calculate estimated profit: (Selling Price - Buying Cost) * Quantity
         const estimatedProfit = (sellingPrice - avgCost) * quantity;
         estimatedProfitElement.textContent = `$${estimatedProfit.toFixed(2)}`;
         estimatedProfitElement.className = `text-lg font-semibold ${estimatedProfit >= 0 ? 'text-green-600' : 'text-red-600'}`;
