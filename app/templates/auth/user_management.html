@@ -3,85 +3,87 @@
 {% block title %}User Management{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">User Management</h1>
-        <a href="{{ url_for('auth.register') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-            <i class="fas fa-plus fa-sm text-white-50"></i> Add New User
+<div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">User Management</h1>
+        <a href="{{ url_for('auth.register') }}" 
+           class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 flex items-center">
+            <i class="fas fa-plus mr-2"></i>
+            Add New User
         </a>
     </div>
 
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">All Users</h6>
+    <!-- Users Table Card -->
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="bg-indigo-600 px-6 py-4">
+            <h2 class="text-xl font-semibold text-white">All Users</h2>
         </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
+        
+        <div class="p-6">
+            <!-- Users Table -->
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
                         <tr>
-                            <th>Username</th>
-                            <th>Full Name</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Status</th>
-                            <th>Created</th>
-                            <th>Actions</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Full Name</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="bg-white divide-y divide-gray-200">
                         {% for user in users %}
-                        <tr>
-                            <td>{{ user.username }}</td>
-                            <td>{{ user.first_name }} {{ user.last_name }}</td>
-                            <td>{{ user.email }}</td>
-                            <td>
-                                <span class="badge badge-{{ 'primary' if user.role.value == 'admin' else 'secondary' }}">
+                        <tr class="hover:bg-gray-50 transition duration-150">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">{{ user.username }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{ user.first_name }} {{ user.last_name }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{ user.email }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                    {% if user.role.value == 'admin' %}bg-purple-100 text-purple-800{% else %}bg-gray-100 text-gray-800{% endif %}">
                                     {{ user.role.value|title }}
                                 </span>
                             </td>
-                            <td>
-                                <span class="badge badge-{{ 'success' if user.active else 'danger' }}">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                    {% if user.active %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
                                     {{ 'Active' if user.active else 'Inactive' }}
                                 </span>
                             </td>
-                            <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
-                            <td>
-                                <div class="btn-group" role="group">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ user.created_at.strftime('%Y-%m-%d') }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="flex space-x-2">
                                     <a href="{{ url_for('auth.edit_user', user_id=user.id) }}" 
-                                       class="btn btn-sm btn-primary">
-                                        <i class="fas fa-edit"></i> Edit
+                                       class="text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 px-3 py-1 rounded text-sm transition duration-150 flex items-center">
+                                        <i class="fas fa-edit mr-1"></i>
+                                        Edit
                                     </a>
+                                    
                                     {% if current_user.id != user.id %}
-                                    <button type="button" 
-                                            class="btn btn-sm btn-{{ 'warning' if user.active else 'success' }} toggle-user"
-                                            data-user-id="{{ user.id }}"
-                                            data-user-name="{{ user.username }}">
-                                        <i class="fas fa-{{ 'ban' if user.active else 'check' }}"></i>
+                                    <button onclick="toggleUser({{ user.id }}, '{{ user.username }}', {{ user.active|lower }})"
+                                            class="{% if user.active %}text-yellow-600 hover:text-yellow-900 bg-yellow-50 hover:bg-yellow-100{% else %}text-green-600 hover:text-green-900 bg-green-50 hover:bg-green-100{% endif %} px-3 py-1 rounded text-sm transition duration-150 flex items-center">
+                                        <i class="fas {% if user.active %}fa-ban{% else %}fa-check{% endif %} mr-1"></i>
                                         {{ 'Deactivate' if user.active else 'Activate' }}
                                     </button>
-                                    <form action="{{ url_for('auth.delete_user', user_id=user.id) }}" 
-                                          method="POST" 
-                                          class="d-inline"
-                                          onsubmit="return confirm('Are you sure you want to delete {{ user.username }}? This action cannot be undone.');">
-                                        <button type="submit" class="btn btn-sm btn-danger">
-                                            <i class="fas fa-trash"></i> Delete
-                                        </button>
-                                    </form>
+                                    
+                                    <button onclick="deleteUser({{ user.id }}, '{{ user.username }}')"
+                                            class="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-3 py-1 rounded text-sm transition duration-150 flex items-center">
+                                        <i class="fas fa-trash mr-1"></i>
+                                        Delete
+                                    </button>
+                                    {% else %}
+                                    <span class="text-gray-400 text-sm">Current User</span>
                                     {% endif %}
                                 </div>
                             </td>
@@ -90,36 +92,66 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Empty State -->
+            {% if not users %}
+            <div class="text-center py-12">
+                <i class="fas fa-users text-gray-300 text-6xl mb-4"></i>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No users found</h3>
+                <p class="text-gray-500 mb-4">Get started by creating your first user.</p>
+                <a href="{{ url_for('auth.register') }}" 
+                   class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 inline-flex items-center">
+                    <i class="fas fa-plus mr-2"></i>
+                    Add New User
+                </a>
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block scripts %}
+<!-- JavaScript for interactive actions -->
 <script>
-$(document).ready(function() {
-    $('.toggle-user').click(function() {
-        const userId = $(this).data('user-id');
-        const userName = $(this).data('user-name');
-        const button = $(this);
+function toggleUser(userId, userName, isActive) {
+    const action = isActive ? 'deactivate' : 'activate';
+    if (confirm(`Are you sure you want to ${action} ${userName}?`)) {
+        fetch(`/auth/user/${userId}/toggle`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while updating user status.');
+        });
+    }
+}
+
+function deleteUser(userId, userName) {
+    if (confirm(`Are you sure you want to delete ${userName}? This action cannot be undone.`)) {
+        // Create a form and submit it
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/auth/user/${userId}/delete`;
         
-        if (confirm(`Are you sure you want to ${button.text().trim()} ${userName}?`)) {
-            $.ajax({
-                url: '{{ url_for("auth.toggle_user", user_id=0) }}'.replace('/0/', '/' + userId + '/'),
-                type: 'POST',
-                success: function(response) {
-                    if (response.success) {
-                        location.reload();
-                    } else {
-                        alert(response.message);
-                    }
-                },
-                error: function() {
-                    alert('An error occurred while updating user status.');
-                }
-            });
+        // Add CSRF token if needed (you might need to adjust this based on your setup)
+        const csrfToken = document.querySelector('input[name="csrf_token"]');
+        if (csrfToken) {
+            form.appendChild(csrfToken.cloneNode(true));
         }
-    });
-});
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
 </script>
 {% endblock %}

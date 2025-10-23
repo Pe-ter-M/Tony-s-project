@@ -18,7 +18,7 @@ def admin_required(f):
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('dashboard.index'))
+        return redirect(url_for('index'))
     
     form = LoginForm()
     
@@ -44,7 +44,7 @@ def login():
         
         next_page = request.args.get('next')
         if not next_page or not next_page.startswith('/'):
-            next_page = url_for('dashboard.index')
+            next_page = url_for('index')
         
         return redirect(next_page)
     
@@ -67,8 +67,8 @@ def user_management():
     return render_template('auth/user_management.html', users=users)
 
 @bp.route('/register', methods=['GET', 'POST'])
-# @login_required
-# @admin_required
+@login_required
+@admin_required
 def register():
     """Admin endpoint to register new users"""
     form = RegistrationForm()
@@ -88,20 +88,26 @@ def register():
         
         # Create new user
         new_user = User()
-        user = User(
-            username=form.username.data,
-            email=form.email.data,
-            first_name=form.first_name.data,
-            last_name=form.last_name.data,
-            role=UserRole.ADMIN if form.role.data == 'admin' else UserRole.STAFF,
-            active=form.is_active.data
-        )
-        user.set_password(form.password.data)
+        new_user.username = form.username.data
+        new_user.email = form.email.data
+        new_user.first_name = form.first_name.data
+        new_user.last_name = form.last_name.data
+        new_user.role = UserRole.ADMIN if form.role.data == 'admin' else UserRole.STAFF
+        new_user.active = form.is_active.data
+        # user = User(
+        #     username=form.username.data,
+        #     email=form.email.data,
+        #     first_name=form.first_name.data,
+        #     last_name=form.last_name.data,
+        #     role=UserRole.ADMIN if form.role.data == 'admin' else UserRole.STAFF,
+        #     active=form.is_active.data
+        # )
+        new_user.set_password(form.password.data)
         
-        db.session.add(user)
+        db.session.add(new_user)
         db.session.commit()
         
-        flash(f'User {user.username} has been created successfully!', 'success')
+        flash(f'User {new_user.username} has been created successfully!', 'success')
         return redirect(url_for('auth.user_management'))
     
     return render_template('auth/register.html', form=form)

@@ -3,132 +3,187 @@
 {% block title %}Add New User{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Add New User</h1>
-        <a href="{{ url_for('auth.user_management') }}" class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm">
-            <i class="fas fa-arrow-left fa-sm text-white-50"></i> Back to Users
+<div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Add New User</h1>
+        <a href="{{ url_for('auth.user_management') }}" 
+           class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 flex items-center">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Back to Users
         </a>
     </div>
 
-    <div class="row">
-        <div class="col-lg-8">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">User Information</h6>
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                {% if category == 'error' %}
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6" role="alert">
+                    {{ message }}
                 </div>
-                <div class="card-body">
-                    <form method="POST" action="">
-                        {{ form.hidden_tag() }}
-                        
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                {{ form.username.label(class="form-control-label") }}
-                                {% if form.username.errors %}
-                                    {{ form.username(class="form-control is-invalid") }}
-                                    <div class="invalid-feedback">
-                                        {% for error in form.username.errors %}
-                                            <span>{{ error }}</span>
-                                        {% endfor %}
-                                    </div>
-                                {% else %}
-                                    {{ form.username(class="form-control") }}
-                                {% endif %}
-                            </div>
-                            <div class="form-group col-md-6">
-                                {{ form.email.label(class="form-control-label") }}
-                                {% if form.email.errors %}
-                                    {{ form.email(class="form-control is-invalid") }}
-                                    <div class="invalid-feedback">
-                                        {% for error in form.email.errors %}
-                                            <span>{{ error }}</span>
-                                        {% endfor %}
-                                    </div>
-                                {% else %}
-                                    {{ form.email(class="form-control") }}
-                                {% endif %}
-                            </div>
-                        </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                {{ form.first_name.label(class="form-control-label") }}
-                                {% if form.first_name.errors %}
-                                    {{ form.first_name(class="form-control is-invalid") }}
-                                    <div class="invalid-feedback">
-                                        {% for error in form.first_name.errors %}
-                                            <span>{{ error }}</span>
-                                        {% endfor %}
-                                    </div>
-                                {% else %}
-                                    {{ form.first_name(class="form-control") }}
-                                {% endif %}
-                            </div>
-                            <div class="form-group col-md-6">
-                                {{ form.last_name.label(class="form-control-label") }}
-                                {% if form.last_name.errors %}
-                                    {{ form.last_name(class="form-control is-invalid") }}
-                                    <div class="invalid-feedback">
-                                        {% for error in form.last_name.errors %}
-                                            <span>{{ error }}</span>
-                                        {% endfor %}
-                                    </div>
-                                {% else %}
-                                    {{ form.last_name(class="form-control") }}
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                {{ form.password.label(class="form-control-label") }}
-                                {% if form.password.errors %}
-                                    {{ form.password(class="form-control is-invalid") }}
-                                    <div class="invalid-feedback">
-                                        {% for error in form.password.errors %}
-                                            <span>{{ error }}</span>
-                                        {% endfor %}
-                                    </div>
-                                {% else %}
-                                    {{ form.password(class="form-control") }}
-                                {% endif %}
-                            </div>
-                            <div class="form-group col-md-6">
-                                {{ form.confirm_password.label(class="form-control-label") }}
-                                {% if form.confirm_password.errors %}
-                                    {{ form.confirm_password(class="form-control is-invalid") }}
-                                    <div class="invalid-feedback">
-                                        {% for error in form.confirm_password.errors %}
-                                            <span>{{ error }}</span>
-                                        {% endfor %}
-                                    </div>
-                                {% else %}
-                                    {{ form.confirm_password(class="form-control") }}
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                {{ form.role.label(class="form-control-label") }}
-                                {{ form.role(class="form-control") }}
-                            </div>
-                            <div class="form-group col-md-6">
-                                <div class="form-check mt-4">
-                                    {{ form.is_active(class="form-check-input") }}
-                                    {{ form.is_active.label(class="form-check-label") }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            {{ form.submit(class="btn btn-primary") }}
-                            <a href="{{ url_for('auth.user_management') }}" class="btn btn-secondary">Cancel</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
+    <!-- Form Card -->
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="bg-indigo-600 px-6 py-4">
+            <h2 class="text-xl font-semibold text-white">User Information</h2>
         </div>
+        
+        <div class="p-6">
+            <form method="POST" action="" class="space-y-6">
+                {{ form.hidden_tag() }}
+                
+                <!-- Username and Email -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
+                            {{ form.username.label }}
+                        </label>
+                        {% if form.username.errors %}
+                            {{ form.username(class="shadow appearance-none border border-red-500 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline") }}
+                            <p class="text-red-500 text-xs italic mt-1">
+                                {% for error in form.username.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </p>
+                        {% else %}
+                            {{ form.username(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500") }}
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+                            {{ form.email.label }}
+                        </label>
+                        {% if form.email.errors %}
+                            {{ form.email(class="shadow appearance-none border border-red-500 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline") }}
+                            <p class="text-red-500 text-xs italic mt-1">
+                                {% for error in form.email.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </p>
+                        {% else %}
+                            {{ form.email(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500") }}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- First Name and Last Name -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="first_name">
+                            {{ form.first_name.label }}
+                        </label>
+                        {% if form.first_name.errors %}
+                            {{ form.first_name(class="shadow appearance-none border border-red-500 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline") }}
+                            <p class="text-red-500 text-xs italic mt-1">
+                                {% for error in form.first_name.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </p>
+                        {% else %}
+                            {{ form.first_name(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500") }}
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="last_name">
+                            {{ form.last_name.label }}
+                        </label>
+                        {% if form.last_name.errors %}
+                            {{ form.last_name(class="shadow appearance-none border border-red-500 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline") }}
+                            <p class="text-red-500 text-xs italic mt-1">
+                                {% for error in form.last_name.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </p>
+                        {% else %}
+                            {{ form.last_name(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500") }}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Password and Confirm Password -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                            {{ form.password.label }}
+                        </label>
+                        {% if form.password.errors %}
+                            {{ form.password(class="shadow appearance-none border border-red-500 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline") }}
+                            <p class="text-red-500 text-xs italic mt-1">
+                                {% for error in form.password.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </p>
+                        {% else %}
+                            {{ form.password(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500") }}
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="confirm_password">
+                            {{ form.confirm_password.label }}
+                        </label>
+                        {% if form.confirm_password.errors %}
+                            {{ form.confirm_password(class="shadow appearance-none border border-red-500 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline") }}
+                            <p class="text-red-500 text-xs italic mt-1">
+                                {% for error in form.confirm_password.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </p>
+                        {% else %}
+                            {{ form.confirm_password(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500") }}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Role and Active Status -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="role">
+                            {{ form.role.label }}
+                        </label>
+                        {{ form.role(class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500") }}
+                    </div>
+
+                    <div class="flex items-center">
+                        <div class="mt-6">
+                            {{ form.is_active(class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded") }}
+                            <label class="ml-2 block text-sm text-gray-900 font-bold" for="is_active">
+                                {{ form.is_active.label.text }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200">
+                    <a href="{{ url_for('auth.user_management') }}" 
+                       class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline transition duration-300">
+                        Cancel
+                    </a>
+                    {{ form.submit(class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline transition duration-300 cursor-pointer") }}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Form Help Text -->
+    <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <h3 class="text-lg font-semibold text-blue-800 mb-2">User Creation Guidelines</h3>
+        <ul class="text-sm text-blue-700 space-y-1">
+            <li>• Username must be unique and 3-64 characters long</li>
+            <li>• Email must be unique and valid</li>
+            <li>• Password must be at least 6 characters long</li>
+            <li>• Admin users have full system access</li>
+            <li>• Staff users have limited permissions</li>
+            <li>• Inactive users cannot log into the system</li>
+        </ul>
     </div>
 </div>
 {% endblock %}
