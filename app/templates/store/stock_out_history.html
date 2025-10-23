@@ -1,0 +1,137 @@
+{% extends "store/base.html" %}
+
+{% block title %}Stock Out History{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Stock Out History</h1>
+            <p class="text-gray-600 mt-2">All sales and outgoing stock transactions</p>
+        </div>
+        <div class="flex space-x-2">
+            <a href="{{ url_for('store.stock_out') }}" 
+               class="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 flex items-center justify-center">
+                <i class="fas fa-arrow-up mr-2"></i>
+                New Sale
+            </a>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-green-100 rounded-lg">
+                    <i class="fas fa-chart-line text-green-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Total Sales</p>
+                    <p class="text-2xl font-bold text-gray-900">${{ "%.2f"|format(total_sales) }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-blue-100 rounded-lg">
+                    <i class="fas fa-money-bill-wave text-blue-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Total Profit</p>
+                    <p class="text-2xl font-bold text-gray-900">${{ "%.2f"|format(total_profit) }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-purple-100 rounded-lg">
+                    <i class="fas fa-shopping-cart text-purple-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Total Transactions</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ stock_outs|length }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stock Out Table -->
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="bg-red-600 px-6 py-4">
+            <h2 class="text-xl font-semibold text-white">Sales Records</h2>
+        </div>
+        
+        <div class="p-6">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Selling Price</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Sale</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profit per Unit</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Profit</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profit Margin</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sold By</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for stock_out in stock_outs %}
+                        {% set profit_per_unit = (stock_out.profit / stock_out.quantity_sold) if stock_out.quantity_sold > 0 else 0 %}
+                        {% set profit_margin = (profit_per_unit / stock_out.selling_price * 100) if stock_out.selling_price > 0 else 0 %}
+                        <tr class="hover:bg-gray-50 transition duration-150">
+                            <td class="px-4 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">{{ stock_out.product.name }}</div>
+                            </td>
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {{ stock_out.date_sold.strftime('%Y-%m-%d %H:%M') }}
+                            </td>
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                                <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium">
+                                    {{ stock_out.quantity_sold }} units
+                                </span>
+                            </td>
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                                ${{ "%.2f"|format(stock_out.selling_price) }}
+                            </td>
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">
+                                ${{ "%.2f"|format(stock_out.total_sale) }}
+                            </td>
+                            <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold {% if profit_per_unit >= 0 %}text-green-600{% else %}text-red-600{% endif %}">
+                                ${{ "%.2f"|format(profit_per_unit) }}
+                            </td>
+                            <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold {% if stock_out.profit >= 0 %}text-green-600{% else %}text-red-600{% endif %}">
+                                ${{ "%.2f"|format(stock_out.profit) }}
+                            </td>
+                            <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold {% if profit_margin >= 0 %}text-green-600{% else %}text-red-600{% endif %}">
+                                {{ "%.1f"|format(profit_margin) }}%
+                            </td>
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ stock_out.customer_info or 'N/A' }}
+                            </td>
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ stock_out.user.username }}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="10" class="px-4 py-8 text-center text-gray-500">
+                                <i class="fas fa-shopping-cart text-4xl text-gray-300 mb-2"></i>
+                                <p class="text-lg">No sales records found</p>
+                                <p class="text-sm">Make some sales to see history</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

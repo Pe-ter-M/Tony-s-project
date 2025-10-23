@@ -38,7 +38,7 @@ def create_app(config_name=None):
     
     # Main index route - protected
     @app.route('/')
-    # @login_required
+    @login_required
     def index():
         return render_template('index.html', user=current_user)
     
