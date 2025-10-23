@@ -127,7 +127,7 @@ def stock_out():
         inventory = Inventory.query.filter_by(product_id=product.id).first()
         
         # Check if enough stock is available
-        if inventory.current_quantity < form.quantity_sold.data:
+        if inventory and inventory.current_quantity < form.quantity_sold.data:
             flash(f'Not enough stock! Only {inventory.current_quantity} units available.', 'error')
             return redirect(url_for('store.stock_out'))
         
@@ -141,11 +141,12 @@ def stock_out():
             user_id=current_user.id
         )
         stock_out.calculate_total_sale()
-        # Calculate profit: (Selling Price - Buying Cost) * Quantity
-        stock_out.calculate_profit(inventory.average_buying_cost)
-        
-        # Update inventory
-        inventory.update_stock_out(stock_out.quantity_sold)
+        if inventory:
+            # Calculate profit: (Selling Price - Buying Cost) * Quantity
+            stock_out.calculate_profit(inventory.average_buying_cost)
+            
+            # Update inventory
+            inventory.update_stock_out(stock_out.quantity_sold)
         
         db.session.add(stock_out)
         db.session.commit()

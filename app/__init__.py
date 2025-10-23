@@ -42,6 +42,6 @@ def create_app(config_name=None):
     @app.route('/')
     @login_required
     def index():
-        return render_template('index.html', user=current_user)
+        return redirect(url_for('dashboard.index'))
     
     return app

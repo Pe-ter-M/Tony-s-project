@@ -11,6 +11,9 @@ class Product(db.Model):
     stock_ins = db.relationship('StockIn', backref='product', lazy=True, cascade='all, delete-orphan')
     stock_outs = db.relationship('StockOut', backref='product', lazy=True, cascade='all, delete-orphan')
     inventory = db.relationship('Inventory', backref='product', lazy=True, uselist=False, cascade='all, delete-orphan')
+
+    def __init__(self, **kwargs):
+        super(Product, self).__init__(**kwargs)
     
     def __repr__(self):
         return f'<Product {self.name}>'
@@ -28,11 +31,16 @@ class StockIn(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     
+    def __init__(self, **kwargs):
+        super(StockIn, self).__init__(**kwargs) 
+
     def calculate_total_cost(self):
         self.total_cost = self.quantity * self.buying_cost
     
     def __repr__(self):
-        return f'<StockIn {self.quantity} of {self.product.name}>'
+        prod = getattr(self, "product", None)
+        name = getattr(prod, "name", "<no product>")
+        return f'<StockIn {self.quantity} of {name}>'
 
 class StockOut(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -48,6 +56,9 @@ class StockOut(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     
+    def __init__(self, **kwargs):
+        super(StockOut, self).__init__(**kwargs) 
+
     def calculate_profit(self, buying_cost):
         """Calculate profit based on buying cost and selling price (SP - BP) * quantity"""
         self.profit = (self.selling_price - buying_cost) * self.quantity_sold
@@ -56,7 +67,9 @@ class StockOut(db.Model):
         self.total_sale = self.quantity_sold * self.selling_price
     
     def __repr__(self):
-        return f'<StockOut {self.quantity_sold} of {self.product.name}>'
+        prod = getattr(self, "product", None)
+        name = getattr(prod, "name", "<no product>")
+        return f'<StockOut {self.quantity_sold} of {name}>'
 
 class Inventory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -67,7 +80,10 @@ class Inventory(db.Model):
     
     # Foreign Key
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), unique=True, nullable=False)
-    
+
+    def __init__(self, **kwargs):
+        super(Inventory, self).__init__(**kwargs) 
+
     def update_stock_in(self, quantity, buying_cost):
         """Update inventory when stock comes in"""
         total_value = (self.current_quantity * self.average_buying_cost) + (quantity * buying_cost)
@@ -89,6 +105,8 @@ class Inventory(db.Model):
     def get_current_value(self):
         """Get current inventory value"""
         return self.current_quantity * self.average_buying_cost
-    
+
     def __repr__(self):
-        return f'<Inventory {self.product.name}: {self.current_quantity} units>'
+        prod = getattr(self, "product", None)
+        name = getattr(prod, "name", "<no product>")
+        return f'<Inventory {name}: {self.current_quantity} units>'
