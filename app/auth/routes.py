@@ -18,6 +18,7 @@ def login():
         print(f"Login attempt - Username: {form.username.data}, Password: {form.password.data}")
         
         user = User.query.filter_by(username=form.username.data).first()
+        print(f'user found {user}')
         
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password', 'error')
