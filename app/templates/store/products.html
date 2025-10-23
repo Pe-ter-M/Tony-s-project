@@ -1,0 +1,103 @@
+{% extends "store/base.html" %}
+
+{% block title %}Products Management{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Products Management</h1>
+            <p class="text-gray-600 mt-2">Manage your product catalog</p>
+        </div>
+        <a href="{{ url_for('store.add_product') }}" 
+           class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 flex items-center justify-center">
+            <i class="fas fa-plus mr-2"></i>
+            Add New Product
+        </a>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for product in products %}
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition duration-300">
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">{{ product.name }}</h3>
+                    <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                        {{ product.inventory.current_quantity }} in stock
+                    </span>
+                </div>
+                
+                {% if product.description %}
+                <p class="text-gray-600 text-sm mb-4">{{ product.description[:100] }}{% if product.description|length > 100 %}...{% endif %}</p>
+                {% endif %}
+                
+                <div class="space-y-2 text-sm text-gray-600">
+                    {% if product.category %}
+                    <div class="flex items-center">
+                        <i class="fas fa-tag mr-2 text-gray-400"></i>
+                        <span>{{ product.category }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if product.sku %}
+                    <div class="flex items-center">
+                        <i class="fas fa-barcode mr-2 text-gray-400"></i>
+                        <span>SKU: {{ product.sku }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="flex items-center">
+                        <i class="fas fa-calendar mr-2 text-gray-400"></i>
+                        <span>Added: {{ product.created_at.strftime('%Y-%m-%d') }}</span>
+                    </div>
+                </div>
+                
+                {% if product.inventory %}
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-500">Avg Cost:</span>
+                        <span class="font-semibold">${{ "%.2f"|format(product.inventory.average_buying_cost) }}</span>
+                    </div>
+                    <div class="flex justify-between text-sm mt-1">
+                        <span class="text-gray-500">Stock Value:</span>
+                        <span class="font-semibold">${{ "%.2f"|format(product.inventory.get_current_value()) }}</span>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="bg-gray-50 px-6 py-3 flex justify-between items-center">
+                <span class="text-xs text-gray-500">
+                    Last updated: {{ product.inventory.last_updated.strftime('%Y-%m-%d') if product.inventory else 'N/A' }}
+                </span>
+                <div class="flex space-x-2">
+                    <a href="{{ url_for('store.stock_in') }}?product={{ product.id }}" 
+                       class="text-green-600 hover:text-green-800 text-sm font-medium">
+                        <i class="fas fa-arrow-down mr-1"></i>Stock In
+                    </a>
+                    {% if product.inventory and product.inventory.current_quantity > 0 %}
+                    <a href="{{ url_for('store.stock_out') }}?product={{ product.id }}" 
+                       class="text-red-600 hover:text-red-800 text-sm font-medium">
+                        <i class="fas fa-arrow-up mr-1"></i>Stock Out
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-span-3 text-center py-12">
+            <i class="fas fa-cube text-6xl text-gray-300 mb-4"></i>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No products found</h3>
+            <p class="text-gray-500 mb-4">Get started by adding your first product.</p>
+            <a href="{{ url_for('store.add_product') }}" 
+               class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 inline-flex items-center">
+                <i class="fas fa-plus mr-2"></i>
+                Add New Product
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
