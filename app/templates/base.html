@@ -190,9 +190,10 @@
 <footer class="bg-white border-t border-gray-200 mt-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div class="flex flex-col md:flex-row justify-between items-center">
-            <div class="text-sm text-gray-600 mb-4 md:mb-0">
-                <p>&copy; 2024 Inventory Management System. All rights reserved.</p>
-            </div>
+           <div class="text-sm text-gray-600 mb-4 md:mb-0">
+    <p>&copy; <span id="current-year">2024</span> Inventory Management System. All rights reserved.</p>
+</div>
+
             <div class="flex space-x-4">
                 {% if current_user.is_authenticated %}
                 <span class="text-sm text-gray-500">
@@ -211,10 +212,14 @@
 
     <!-- JavaScript -->
     <script>
+   
         // Mobile menu toggle
         document.addEventListener('DOMContentLoaded', function() {
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
+                    document.getElementById('current-year').textContent = new Date().getFullYear();
+
+
             
             if (mobileMenuButton && mobileMenu) {
                 mobileMenuButton.addEventListener('click', function() {
