@@ -67,8 +67,8 @@ def user_management():
     return render_template('auth/user_management.html', users=users)
 
 @bp.route('/register', methods=['GET', 'POST'])
-# @login_required
-# @admin_required
+@login_required
+@admin_required
 def register():
     """Admin endpoint to register new users"""
     form = RegistrationForm()
