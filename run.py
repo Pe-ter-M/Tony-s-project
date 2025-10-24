@@ -4,7 +4,9 @@ from app.models.user import User
 from app.models.product import Product
 from app.models.product import StockIn, StockOut, Inventory
 
-app = create_app(config_name='development')
+config_name = os.environ.get('CONFIG_NAME')
+
+app = create_app(config_name=config_name)
 
 @app.shell_context_processor
 def make_shell_context():
