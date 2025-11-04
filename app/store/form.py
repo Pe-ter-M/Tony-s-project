@@ -10,15 +10,15 @@ class ProductForm(FlaskForm):
 class StockInForm(FlaskForm):
     product_id = SelectField('Product', coerce=int, validators=[DataRequired()])
     quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=1)])
-    buying_cost = FloatField('Buying Cost per Unit ($)', validators=[DataRequired(), NumberRange(min=0.01)])
-    selling_price = FloatField('Intended Selling Price ($)', validators=[DataRequired(), NumberRange(min=0.01)])
+    buying_cost = FloatField('Buying Cost per Unit (KES)', validators=[DataRequired(), NumberRange(min=0.01)])
+    selling_price = FloatField('Intended Selling Price (KES)', validators=[DataRequired(), NumberRange(min=0.01)])
     notes = TextAreaField('Notes', validators=[Optional()])
     submit = SubmitField('Add Stock')
 
 class StockOutForm(FlaskForm):
     product_id = SelectField('Product', coerce=int, validators=[DataRequired()])
     quantity_sold = IntegerField('Quantity Sold', validators=[DataRequired(), NumberRange(min=1)])
-    selling_price = FloatField('Selling Price ($)', validators=[DataRequired(), NumberRange(min=0.01)])
+    selling_price = FloatField('Selling Price (KES)', validators=[DataRequired(), NumberRange(min=0.01)])
     customer_info = StringField('Customer Info', validators=[Optional(), Length(max=200)])
     notes = TextAreaField('Notes', validators=[Optional()])
     submit = SubmitField('Sell Stock')

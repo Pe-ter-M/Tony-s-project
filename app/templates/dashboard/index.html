@@ -33,7 +33,7 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Inventory Value</p>
-                    <p class="text-2xl font-bold text-gray-900">${{ "%.2f"|format(total_inventory_value) }}</p>
+                    <p class="text-2xl font-bold text-gray-900">KES {{ "%.2f"|format(total_inventory_value) }}</p>
                 </div>
             </div>
         </div>
@@ -59,7 +59,7 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Total Profit</p>
-                    <p class="text-2xl font-bold text-gray-900">${{ "%.2f"|format(total_profit) }}</p>
+                    <p class="text-2xl font-bold text-gray-900">KES {{ "%.2f"|format(total_profit) }}</p>
                 </div>
             </div>
         </div>
@@ -73,11 +73,11 @@
             <div class="space-y-3">
                 <div class="flex justify-between items-center">
                     <span class="text-gray-600">Sales:</span>
-                    <span class="font-semibold text-green-600">${{ "%.2f"|format(daily_sales) }}</span>
+                    <span class="font-semibold text-green-600">KES {{ "%.2f"|format(daily_sales) }}</span>
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-gray-600">Profit:</span>
-                    <span class="font-semibold text-blue-600">${{ "%.2f"|format(daily_profit) }}</span>
+                    <span class="font-semibold text-blue-600">KES {{ "%.2f"|format(daily_profit) }}</span>
                 </div>
             </div>
         </div>
@@ -88,12 +88,11 @@
             <div class="space-y-3">
                 <div class="flex justify-between items-center">
                     <span class="text-gray-600">Sales:</span>
-                    <span class="font-semibold text-green-600">${{ "%.2f"|format(weekly_sales) }}</span>
+                    <span class="font-semibold text-green-600">KES {{ "%.2f"|format(weekly_sales) }}</span>
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-gray-600">Profit:</span>
-                    <span class="font-semibold text-blue-600">${{ "%.2f"|format(weekly_profit) }}</span>
-                </div>
+                    <span class="font-semibold text-blue-600">KES {{ "%.2f"|format(weekly_profit) }}</span> </div>
             </div>
         </div>
 
@@ -103,11 +102,11 @@
             <div class="space-y-3">
                 <div class="flex justify-between items-center">
                     <span class="text-gray-600">Sales:</span>
-                    <span class="font-semibold text-green-600">${{ "%.2f"|format(monthly_sales) }}</span>
+                    <span class="font-semibold text-green-600">KES {{ "%.2f"|format(monthly_sales) }}</span>
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-gray-600">Profit:</span>
-                    <span class="font-semibold text-blue-600">${{ "%.2f"|format(monthly_profit) }}</span>
+                    <span class="font-semibold text-blue-600">KES {{ "%.2f"|format(monthly_profit) }}</span>
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-gray-600">Stock In:</span>
@@ -152,7 +151,7 @@
                         <span class="font-medium text-gray-900">{{ product.name }}</span>
                         <p class="text-sm text-gray-600">{{ product.total_sold }} units sold</p>
                     </div>
-                    <span class="font-semibold text-green-600">${{ "%.2f"|format(product.total_profit or 0) }}</span>
+                    <span class="font-semibold text-green-600">KES {{ "%.2f"|format(product.total_profit or 0) }}</span>
                 </div>
                 {% else %}
                 <p class="text-gray-500 text-center py-4">No sales data available</p>
@@ -170,7 +169,7 @@
                         <span class="font-medium text-gray-900">{{ product.name }}</span>
                         <p class="text-sm text-gray-600">{{ product.total_sold }} units sold</p>
                     </div>
-                    <span class="font-semibold text-green-600">${{ "%.2f"|format(product.total_profit or 0) }}</span>
+                    <span class="font-semibold text-green-600">KES {{ "%.2f"|format(product.total_profit or 0) }}</span>
                 </div>
                 {% else %}
                 <p class="text-gray-500 text-center py-4">No sales data available</p>
@@ -233,7 +232,7 @@
                         <div class="flex justify-between items-center text-sm">
                             <span class="truncate">{{ sale.product.name }}</span>
                             <div class="text-right">
-                                <span class="font-semibold">${{ "%.2f"|format(sale.total_sale) }}</span>
+                                <span class="font-semibold">KES {{ "%.2f"|format(sale.total_sale) }}</span>
                                 <p class="text-xs text-gray-500">{{ sale.date_sold.strftime('%H:%M') }}</p>
                             </div>
                         </div>
@@ -284,8 +283,8 @@
                     {% for product in profitable_products %}
                     <tr class="hover:bg-gray-50">
                         <td class="px-4 py-3 text-sm font-medium text-gray-900">{{ product.name }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">${{ "%.2f"|format(product.avg_selling_price or 0) }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">${{ "%.2f"|format(product.avg_buying_cost or 0) }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">KES {{ "%.2f"|format(product.avg_selling_price or 0) }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">KES {{ "%.2f"|format(product.avg_buying_cost or 0) }}</td>
                         <td class="px-4 py-3 text-sm font-semibold {% if (product.profit_margin or 0) > 0 %}text-green-600{% else %}text-red-600{% endif %}">
                             {{ "%.1f"|format(product.profit_margin or 0) }}%
                         </td>
