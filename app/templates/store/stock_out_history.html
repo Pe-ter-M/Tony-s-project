@@ -11,8 +11,8 @@
             <p class="text-gray-600 mt-2">All sales and outgoing stock transactions</p>
         </div>
         <div class="flex space-x-2">
-            <a href="{{ url_for('store.stock_out') }}" 
-               class="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 flex items-center justify-center">
+            <a href="{{ url_for('store.stock_out') }}"
+                class="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 flex items-center justify-center">
                 <i class="fas fa-arrow-up mr-2"></i>
                 New Sale
             </a>
@@ -28,7 +28,9 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Total Sales</p>
-                    <p class="text-2xl font-bold text-gray-900">KES {{ "%.2f"|format(total_sales) }}</p>
+                    <p class="text-2xl font-bold text-gray-900" data-format="currency" data-value="{{ total_sales }}">
+                        KES {{ "%.2f"|format(total_sales) }}
+                    </p>
                 </div>
             </div>
         </div>
@@ -40,7 +42,9 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Total Profit</p>
-                    <p class="text-2xl font-bold text-gray-900">KES {{ "%.2f"|format(total_profit) }}</p>
+                    <p class="text-2xl font-bold text-gray-900" data-format="currency" data-value="{{ total_profit }}">
+                        KES {{ "%.2f"|format(total_profit) }}
+                    </p>
                 </div>
             </div>
         </div>
@@ -52,7 +56,10 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Total Transactions</p>
-                    <p class="text-2xl font-bold text-gray-900">{{ stock_outs|length }}</p>
+                    <p class="text-2xl font-bold text-gray-900" data-format="number"
+                        data-value="{{ stock_outs|length }}">
+                        {{ stock_outs|length }}
+                    </p>
                 </div>
             </div>
         </div>
@@ -63,28 +70,40 @@
         <div class="bg-red-600 px-6 py-4">
             <h2 class="text-xl font-semibold text-white">Sales Records</h2>
         </div>
-        
+
         <div class="p-6">
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Selling Price</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Sale</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profit per Unit</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Profit</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profit Margin</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sold By</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Product</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Date</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Quantity</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Selling Price</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Total Sale</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Profit per Unit</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Total Profit</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Profit Margin</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Customer</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Sold By</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         {% for stock_out in stock_outs %}
-                        {% set profit_per_unit = (stock_out.profit / stock_out.quantity_sold) if stock_out.quantity_sold > 0 else 0 %}
-                        {% set profit_margin = (profit_per_unit / stock_out.selling_price * 100) if stock_out.selling_price > 0 else 0 %}
+                        {% set profit_per_unit = (stock_out.profit / stock_out.quantity_sold) if stock_out.quantity_sold
+                        > 0 else 0 %}
+                        {% set profit_margin = (profit_per_unit / stock_out.selling_price * 100) if
+                        stock_out.selling_price > 0 else 0 %}
                         <tr class="hover:bg-gray-50 transition duration-150">
                             <td class="px-4 py-4 whitespace-nowrap">
                                 <div class="text-sm font-medium text-gray-900">{{ stock_out.product.name }}</div>
@@ -93,23 +112,29 @@
                                 {{ stock_out.date_sold.strftime('%Y-%m-%d %H:%M') }}
                             </td>
                             <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                                <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium">
+                                <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium"
+                                    data-format="number" data-value="{{ stock_out.quantity_sold }}">
                                     {{ stock_out.quantity_sold }} units
                                 </span>
                             </td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900" data-format="currency"
+                                data-value="{{ stock_out.selling_price }}">
                                 KES {{ "%.2f"|format(stock_out.selling_price) }}
                             </td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold"
+                                data-format="currency" data-value="{{ stock_out.total_sale }}">
                                 KES {{ "%.2f"|format(stock_out.total_sale) }}
                             </td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold {% if profit_per_unit >= 0 %}text-green-600{% else %}text-red-600{% endif %}">
+                            <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold {% if profit_per_unit >= 0 %}text-green-600{% else %}text-red-600{% endif %}"
+                                data-format="currency" data-value="{{ profit_per_unit }}">
                                 KES {{ "%.2f"|format(profit_per_unit) }}
                             </td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold {% if stock_out.profit >= 0 %}text-green-600{% else %}text-red-600{% endif %}">
+                            <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold {% if stock_out.profit >= 0 %}text-green-600{% else %}text-red-600{% endif %}"
+                                data-format="currency" data-value="{{ stock_out.profit }}">
                                 KES {{ "%.2f"|format(stock_out.profit) }}
                             </td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold {% if profit_margin >= 0 %}text-green-600{% else %}text-red-600{% endif %}">
+                            <td
+                                class="px-4 py-4 whitespace-nowrap text-sm font-semibold {% if profit_margin >= 0 %}text-green-600{% else %}text-red-600{% endif %}">
                                 {{ "%.1f"|format(profit_margin) }}%
                             </td>
                             <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -134,4 +159,69 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Number formatting functions
+    function formatNumber(number) {
+        if (number === null || number === undefined || isNaN(number)) return '0';
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    function formatCurrency(amount) {
+        if (amount === null || amount === undefined || isNaN(amount)) return 'KES 0.00';
+
+        const number = parseFloat(amount);
+
+        // Handle very small numbers and zero
+        if (number === 0) return 'KES 0.00';
+
+        // Split into integer and decimal parts
+        const parts = number.toFixed(2).split('.');
+        const integerPart = parts[0];
+        const decimalPart = parts[1];
+
+        // Add commas to integer part
+        const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+        return 'KES ' + formattedInteger + '.' + decimalPart;
+    }
+
+    function formatAllNumbers() {
+        // Format numbers
+        document.querySelectorAll('[data-format="number"]').forEach(element => {
+            const rawValue = element.getAttribute('data-value');
+            if (rawValue) {
+                const value = parseFloat(rawValue);
+                if (!isNaN(value)) {
+                    const currentText = element.textContent;
+                    const numericMatch = currentText.match(/(\d+)/);
+                    if (numericMatch) {
+                        element.textContent = currentText.replace(numericMatch[0], formatNumber(value));
+                    } else {
+                        element.textContent = formatNumber(value) + ' units';
+                    }
+                }
+            }
+        });
+
+        // Format currency
+        document.querySelectorAll('[data-format="currency"]').forEach(element => {
+            const rawValue = element.getAttribute('data-value');
+            if (rawValue) {
+                const value = parseFloat(rawValue);
+                if (!isNaN(value)) {
+                    element.textContent = formatCurrency(value);
+                }
+            }
+        });
+    }
+
+    // Apply formatting when page loads
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('Formatting numbers on Stock Out History page...');
+        formatAllNumbers();
+    });
+</script>
 {% endblock %}

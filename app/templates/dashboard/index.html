@@ -20,7 +20,8 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Total Products</p>
-                    <p class="text-2xl font-bold text-gray-900" id="total-products">{{ total_products }}</p>
+                    <p class="text-2xl font-bold text-gray-900" data-format="number" data-value="{{ total_products }}">
+                        {{ total_products }}</p>
                 </div>
             </div>
         </div>
@@ -33,7 +34,8 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Inventory Value</p>
-                    <p class="text-2xl font-bold text-gray-900" id="inventory-value">KES {{ "%.2f"|format(total_inventory_value) }}</p>
+                    <p class="text-2xl font-bold text-gray-900" data-format="currency"
+                        data-value="{{ total_inventory_value }}">KES {{ "%.2f"|format(total_inventory_value) }}</p>
                 </div>
             </div>
         </div>
@@ -46,7 +48,8 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Items in Stock</p>
-                    <p class="text-2xl font-bold text-gray-900" id="items-stock">{{ total_items_in_stock }}</p>
+                    <p class="text-2xl font-bold text-gray-900" data-format="number"
+                        data-value="{{ total_items_in_stock }}">{{ total_items_in_stock }}</p>
                 </div>
             </div>
         </div>
@@ -59,7 +62,8 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Total Profit</p>
-                    <p class="text-2xl font-bold text-gray-900" id="total-profit">KES {{ "%.2f"|format(total_profit) }}</p>
+                    <p class="text-2xl font-bold text-gray-900" data-format="currency" data-value="{{ total_profit }}">
+                        KES {{ "%.2f"|format(total_profit) }}</p>
                 </div>
             </div>
         </div>
@@ -73,11 +77,13 @@
             <div class="space-y-3">
                 <div class="flex justify-between items-center">
                     <span class="text-gray-600">Sales:</span>
-                    <span class="font-semibold text-green-600" id="daily-sales">KES {{ "%.2f"|format(daily_sales) }}</span>
+                    <span class="font-semibold text-green-600" data-format="currency" data-value="{{ daily_sales }}">KES
+                        {{ "%.2f"|format(daily_sales) }}</span>
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-gray-600">Profit:</span>
-                    <span class="font-semibold text-blue-600" id="daily-profit">KES {{ "%.2f"|format(daily_profit) }}</span>
+                    <span class="font-semibold text-blue-600" data-format="currency" data-value="{{ daily_profit }}">KES
+                        {{ "%.2f"|format(daily_profit) }}</span>
                 </div>
             </div>
         </div>
@@ -88,11 +94,14 @@
             <div class="space-y-3">
                 <div class="flex justify-between items-center">
                     <span class="text-gray-600">Sales:</span>
-                    <span class="font-semibold text-green-600" id="weekly-sales">KES {{ "%.2f"|format(weekly_sales) }}</span>
+                    <span class="font-semibold text-green-600" data-format="currency"
+                        data-value="{{ weekly_sales }}">KES {{ "%.2f"|format(weekly_sales) }}</span>
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-gray-600">Profit:</span>
-                    <span class="font-semibold text-blue-600" id="weekly-profit">KES {{ "%.2f"|format(weekly_profit) }}</span> </div>
+                    <span class="font-semibold text-blue-600" data-format="currency"
+                        data-value="{{ weekly_profit }}">KES {{ "%.2f"|format(weekly_profit) }}</span>
+                </div>
             </div>
         </div>
 
@@ -102,19 +111,23 @@
             <div class="space-y-3">
                 <div class="flex justify-between items-center">
                     <span class="text-gray-600">Sales:</span>
-                    <span class="font-semibold text-green-600" id="monthly-sales">KES {{ "%.2f"|format(monthly_sales) }}</span>
+                    <span class="font-semibold text-green-600" data-format="currency"
+                        data-value="{{ monthly_sales }}">KES {{ "%.2f"|format(monthly_sales) }}</span>
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-gray-600">Profit:</span>
-                    <span class="font-semibold text-blue-600" id="monthly-profit">KES {{ "%.2f"|format(monthly_profit) }}</span>
+                    <span class="font-semibold text-blue-600" data-format="currency"
+                        data-value="{{ monthly_profit }}">KES {{ "%.2f"|format(monthly_profit) }}</span>
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-gray-600">Stock In:</span>
-                    <span class="font-semibold text-gray-600" id="stock-ins">{{ stock_ins_this_month }} units</span>
+                    <span class="font-semibold text-gray-600" data-format="number"
+                        data-value="{{ stock_ins_this_month }}">{{ stock_ins_this_month }} units</span>
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-gray-600">Stock Out:</span>
-                    <span class="font-semibold text-gray-600" id="stock-outs">{{ stock_outs_this_month }} units</span>
+                    <span class="font-semibold text-gray-600" data-format="number"
+                        data-value="{{ stock_outs_this_month }}">{{ stock_outs_this_month }} units</span>
                 </div>
             </div>
         </div>
@@ -149,9 +162,12 @@
                 <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                     <div>
                         <span class="font-medium text-gray-900">{{ product.name }}</span>
-                        <p class="text-sm text-gray-600" id="top-product-sold-{{ loop.index }}">{{ product.total_sold }} units sold</p>
+                        <p class="text-sm text-gray-600" data-format="number" data-value="{{ product.total_sold }}">{{
+                            product.total_sold }} units sold</p>
                     </div>
-                    <span class="font-semibold text-green-600" id="top-product-profit-{{ loop.index }}">KES {{ "%.2f"|format(product.total_profit or 0) }}</span>
+                    <span class="font-semibold text-green-600" data-format="currency"
+                        data-value="{{ product.total_profit or 0 }}">KES {{ "%.2f"|format(product.total_profit or 0)
+                        }}</span>
                 </div>
                 {% else %}
                 <p class="text-gray-500 text-center py-4">No sales data available</p>
@@ -167,9 +183,12 @@
                 <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                     <div>
                         <span class="font-medium text-gray-900">{{ product.name }}</span>
-                        <p class="text-sm text-gray-600" id="least-product-sold-{{ loop.index }}">{{ product.total_sold }} units sold</p>
+                        <p class="text-sm text-gray-600" data-format="number" data-value="{{ product.total_sold }}">{{
+                            product.total_sold }} units sold</p>
                     </div>
-                    <span class="font-semibold text-green-600" id="least-product-profit-{{ loop.index }}">KES {{ "%.2f"|format(product.total_profit or 0) }}</span>
+                    <span class="font-semibold text-green-600" data-format="currency"
+                        data-value="{{ product.total_profit or 0 }}">KES {{ "%.2f"|format(product.total_profit or 0)
+                        }}</span>
                 </div>
                 {% else %}
                 <p class="text-gray-500 text-center py-4">No sales data available</p>
@@ -183,22 +202,23 @@
         <!-- Stock Alerts -->
         <div class="bg-white rounded-lg shadow-lg p-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Stock Alerts</h3>
-            
+
             <!-- Low Stock -->
             <div class="mb-4">
                 <h4 class="font-medium text-yellow-600 mb-2">Low Stock (< 10 items)</h4>
-                {% if low_stock_items %}
-                <div class="space-y-2">
-                    {% for item in low_stock_items %}
-                    <div class="flex justify-between items-center p-2 bg-yellow-50 rounded">
-                        <span class="text-sm font-medium">{{ item.product.name }}</span>
-                        <span class="text-sm text-yellow-700 font-semibold" id="low-stock-{{ loop.index }}">{{ item.current_quantity }} left</span>
-                    </div>
-                    {% endfor %}
-                </div>
-                {% else %}
-                <p class="text-gray-500 text-sm">No low stock items</p>
-                {% endif %}
+                        {% if low_stock_items %}
+                        <div class="space-y-2">
+                            {% for item in low_stock_items %}
+                            <div class="flex justify-between items-center p-2 bg-yellow-50 rounded">
+                                <span class="text-sm font-medium">{{ item.product.name }}</span>
+                                <span class="text-sm text-yellow-700 font-semibold" data-format="number"
+                                    data-value="{{ item.current_quantity }}">{{ item.current_quantity }} left</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p class="text-gray-500 text-sm">No low stock items</p>
+                        {% endif %}
             </div>
 
             <!-- Out of Stock -->
@@ -232,7 +252,8 @@
                         <div class="flex justify-between items-center text-sm">
                             <span class="truncate">{{ sale.product.name }}</span>
                             <div class="text-right">
-                                <span class="font-semibold" id="recent-sale-{{ loop.index }}">KES {{ "%.2f"|format(sale.total_sale) }}</span>
+                                <span class="font-semibold" data-format="currency"
+                                    data-value="{{ sale.total_sale }}">KES {{ "%.2f"|format(sale.total_sale) }}</span>
                                 <p class="text-xs text-gray-500">{{ sale.date_sold.strftime('%H:%M') }}</p>
                             </div>
                         </div>
@@ -252,7 +273,8 @@
                         <div class="flex justify-between items-center text-sm">
                             <span class="truncate">{{ stock_in.product.name }}</span>
                             <div class="text-right">
-                                <span class="font-semibold" id="recent-stock-in-{{ loop.index }}">{{ stock_in.quantity }} units</span>
+                                <span class="font-semibold" data-format="number" data-value="{{ stock_in.quantity }}">{{
+                                    stock_in.quantity }} units</span>
                                 <p class="text-xs text-gray-500">{{ stock_in.date_received.strftime('%H:%M') }}</p>
                             </div>
                         </div>
@@ -274,7 +296,8 @@
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Avg Selling Price</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Avg Selling Price
+                        </th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Avg Buying Cost</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Profit Margin</th>
                     </tr>
@@ -283,9 +306,14 @@
                     {% for product in profitable_products %}
                     <tr class="hover:bg-gray-50">
                         <td class="px-4 py-3 text-sm font-medium text-gray-900">{{ product.name }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900" id="avg-price-{{ loop.index }}">KES {{ "%.2f"|format(product.avg_selling_price or 0) }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900" id="avg-cost-{{ loop.index }}">KES {{ "%.2f"|format(product.avg_buying_cost or 0) }}</td>
-                        <td class="px-4 py-3 text-sm font-semibold {% if (product.profit_margin or 0) > 0 %}text-green-600{% else %}text-red-600{% endif %}">
+                        <td class="px-4 py-3 text-sm text-gray-900" data-format="currency"
+                            data-value="{{ product.avg_selling_price or 0 }}">KES {{
+                            "%.2f"|format(product.avg_selling_price or 0) }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900" data-format="currency"
+                            data-value="{{ product.avg_buying_cost or 0 }}">KES {{ "%.2f"|format(product.avg_buying_cost
+                            or 0) }}</td>
+                        <td
+                            class="px-4 py-3 text-sm font-semibold {% if (product.profit_margin or 0) > 0 %}text-green-600{% else %}text-red-600{% endif %}">
                             {{ "%.1f"|format(product.profit_margin or 0) }}%
                         </td>
                     </tr>
@@ -304,219 +332,188 @@
 {% block scripts %}
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<>
-// Number formatting functions
-function formatNumber(num) {
-    if (num === null || num === undefined) return '0';
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
-function formatCurrency(amount) {
-    if (amount === null || amount === undefined) return 'KES 0.00';
-    const number = parseFloat(amount);
-    return 'KES ' + number.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
-function extractNumberFromText(text) {
-    // Extract numeric value from text that might contain currency symbols or text
-    const match = text.replace(/[^\d.-]/g, '');
-    return match ? parseFloat(match) : 0;
-}
-
-function formatAllNumbers() {
-    // Format numbers in summary cards
-    document.getElementById('total-products').textContent = formatNumber(extractNumberFromText(document.getElementById('total-products').textContent));
-    document.getElementById('items-stock').textContent = formatNumber(extractNumberFromText(document.getElementById('items-stock').textContent));
-    document.getElementById('stock-ins').textContent = formatNumber(extractNumberFromText(document.getElementById('stock-ins').textContent)) + ' units';
-    document.getElementById('stock-outs').textContent = formatNumber(extractNumberFromText(document.getElementById('stock-outs').textContent)) + ' units';
-
-    // Format currency values
-    const currencyElements = [
-        'inventory-value', 'total-profit', 'daily-sales', 'daily-profit',
-        'weekly-sales', 'weekly-profit', 'monthly-sales', 'monthly-profit'
-    ];
-    
-    currencyElements.forEach(id => {
-        const element = document.getElementById(id);
-        if (element) {
-            const amount = extractNumberFromText(element.textContent);
-            element.textContent = formatCurrency(amount);
-        }
-    });
-
-    // Format product quantities and profits
-    {% for product in top_products %}
-    const topSold{{ loop.index }} = document.getElementById('top-product-sold-{{ loop.index }}');
-    const topProfit{{ loop.index }} = document.getElementById('top-product-profit-{{ loop.index }}');
-    if (topSold{{ loop.index }}) {
-        const quantity = extractNumberFromText(topSold{{ loop.index }}.textContent);
-        topSold{{ loop.index }}.textContent = formatNumber(quantity) + ' units sold';
+<script>
+    // Number formatting functions
+    function formatNumber(number) {
+        if (number === null || number === undefined || isNaN(number)) return '0';
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
-    if (topProfit{{ loop.index }}) {
-        const profit = extractNumberFromText(topProfit{{ loop.index }}.textContent);
-        topProfit{{ loop.index }}.textContent = formatCurrency(profit);
-    }
-    {% endfor %}
 
-    {% for product in least_products %}
-    const leastSold{{ loop.index }} = document.getElementById('least-product-sold-{{ loop.index }}');
-    const leastProfit{{ loop.index }} = document.getElementById('least-product-profit-{{ loop.index }}');
-    if (leastSold{{ loop.index }}) {
-        const quantity = extractNumberFromText(leastSold{{ loop.index }}.textContent);
-        leastSold{{ loop.index }}.textContent = formatNumber(quantity) + ' units sold';
-    }
-    if (leastProfit{{ loop.index }}) {
-        const profit = extractNumberFromText(leastProfit{{ loop.index }}.textContent);
-        leastProfit{{ loop.index }}.textContent = formatCurrency(profit);
-    }
-    {% endfor %}
+    function formatCurrency(amount) {
+        if (amount === null || amount === undefined || isNaN(amount)) return 'KES 0.00';
 
-    // Format low stock quantities
-    {% for item in low_stock_items %}
-    const lowStock{{ loop.index }} = document.getElementById('low-stock-{{ loop.index }}');
-    if (lowStock{{ loop.index }}) {
-        const quantity = extractNumberFromText(lowStock{{ loop.index }}.textContent);
-        lowStock{{ loop.index }}.textContent = formatNumber(quantity) + ' left';
-    }
-    {% endfor %}
+        const number = parseFloat(amount);
 
-    // Format recent sales and stock ins
-    {% for sale in recent_sales %}
-    const recentSale{{ loop.index }} = document.getElementById('recent-sale-{{ loop.index }}');
-    if (recentSale{{ loop.index }}) {
-        const amount = extractNumberFromText(recentSale{{ loop.index }}.textContent);
-        recentSale{{ loop.index }}.textContent = formatCurrency(amount);
-    }
-    {% endfor %}
+        // Handle very small numbers and zero
+        if (number === 0) return 'KES 0.00';
 
-    {% for stock_in in recent_stock_ins %}
-    const recentStockIn{{ loop.index }} = document.getElementById('recent-stock-in-{{ loop.index }}');
-    if (recentStockIn{{ loop.index }}) {
-        const quantity = extractNumberFromText(recentStockIn{{ loop.index }}.textContent);
-        recentStockIn{{ loop.index }}.textContent = formatNumber(quantity) + ' units';
-    }
-    {% endfor %}
+        // Split into integer and decimal parts
+        const parts = number.toFixed(2).split('.');
+        const integerPart = parts[0];
+        const decimalPart = parts[1];
 
-    // Format profit margin table
-    {% for product in profitable_products %}
-    const avgPrice{{ loop.index }} = document.getElementById('avg-price-{{ loop.index }}');
-    const avgCost{{ loop.index }} = document.getElementById('avg-cost-{{ loop.index }}');
-    if (avgPrice{{ loop.index }}) {
-        const price = extractNumberFromText(avgPrice{{ loop.index }}.textContent);
-        avgPrice{{ loop.index }}.textContent = formatCurrency(price);
-    }
-    if (avgCost{{ loop.index }}) {
-        const cost = extractNumberFromText(avgCost{{ loop.index }}.textContent);
-        avgCost{{ loop.index }}.textContent = formatCurrency(cost);
-    }
-    {% endfor %}
-}
+        // Add commas to integer part
+        const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Format all numbers on page load
-    formatAllNumbers();
+        return 'KES ' + formattedInteger + '.' + decimalPart;
+    }
 
-    // Sales Chart
-    fetch('/dashboard/api/sales-data')
-        .then(response => response.json())
-        .then(data => {
-            const ctx = document.getElementById('salesChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: data.dates,
-                    datasets: [
-                        {
-                            label: 'Sales',
-                            data: data.sales,
-                            borderColor: '#10B981',
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        },
-                        {
-                            label: 'Profit',
-                            data: data.profits,
-                            borderColor: '#3B82F6',
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return 'KES ' + formatNumber(value);
-                                }
+    function formatAllNumbers() {
+        // Format numbers
+        document.querySelectorAll('[data-format="number"]').forEach(element => {
+            const rawValue = element.getAttribute('data-value');
+            if (rawValue) {
+                const value = parseFloat(rawValue);
+                if (!isNaN(value)) {
+                    const currentText = element.textContent;
+                    const numericMatch = currentText.match(/(\d+)/);
+                    if (numericMatch) {
+                        element.textContent = currentText.replace(numericMatch[0], formatNumber(value));
+                    } else {
+                        element.textContent = formatNumber(value) + ' units';
+                    }
+                }
+            }
+        });
+
+        // Format currency
+        document.querySelectorAll('[data-format="currency"]').forEach(element => {
+            const rawValue = element.getAttribute('data-value');
+            if (rawValue) {
+                const value = parseFloat(rawValue);
+                if (!isNaN(value)) {
+                    element.textContent = formatCurrency(value);
+                }
+            }
+        });
+    }
+    // In your dashboard template
+    document.addEventListener('DOMContentLoaded', function () {
+        // Format all numbers on page load
+        formatAllNumbers();
+
+        // Sales Chart - use correct endpoint URLs
+        fetch('/dashboard/api/sales-data')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const ctx = document.getElementById('salesChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.dates,
+                        datasets: [
+                            {
+                                label: 'Sales',
+                                data: data.sales,
+                                borderColor: '#10B981',
+                                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                tension: 0.4,
+                                fill: true
+                            },
+                            {
+                                label: 'Profit',
+                                data: data.profits,
+                                borderColor: '#3B82F6',
+                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                tension: 0.4,
+                                fill: true
                             }
-                        }
+                        ]
                     },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) {
-                                        label += ': ';
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function (value) {
+                                        return 'KES ' + formatNumber(value);
                                     }
-                                    label += 'KES ' + formatNumber(context.parsed.y);
-                                    return label;
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        label += 'KES ' + formatNumber(context.parsed.y);
+                                        return label;
+                                    }
                                 }
                             }
                         }
                     }
-                }
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching sales data:', error);
+                // You can show a fallback message or hide the chart
+                document.getElementById('salesChart').closest('.bg-white').innerHTML = '<p class="text-gray-500 text-center py-8">Sales chart data not available</p>';
             });
-        });
 
-    // Product Performance Chart
-    fetch('/dashboard/api/product-performance')
-        .then(response => response.json())
-        .then(data => {
-            const ctx = document.getElementById('productChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: data.products,
-                    datasets: [{
-                        label: 'Quantity Sold',
-                        data: data.quantities,
-                        backgroundColor: 'rgba(139, 92, 246, 0.7)',
-                        borderColor: 'rgba(139, 92, 246, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return formatNumber(value);
+        // Product Performance Chart
+        fetch('/dashboard/api/product-performance')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const ctx = document.getElementById('productChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.products,
+                        datasets: [{
+                            label: 'Quantity Sold',
+                            data: data.quantities,
+                            backgroundColor: 'rgba(139, 92, 246, 0.7)',
+                            borderColor: 'rgba(139, 92, 246, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function (value) {
+                                        return formatNumber(value);
+                                    }
                                 }
                             }
-                        }
-                    },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return 'Quantity: ' + formatNumber(context.parsed.y);
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        return 'Quantity: ' + formatNumber(context.parsed.y);
+                                    }
                                 }
                             }
                         }
                     }
-                }
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching product performance data:', error);
+                // You can show a fallback message or hide the chart
+                document.getElementById('productChart').closest('.bg-white').innerHTML = '<p class="text-gray-500 text-center py-8">Product performance chart data not available</p>';
             });
-        });
-});
+    });
+    ;
 </script>
 {% endblock %}

@@ -89,7 +89,6 @@
                     </div>
 
                     <!-- Selling Price -->
-
                     <div>
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="selling_price">
                             {{ form.selling_price.label }}
@@ -119,11 +118,11 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 p-4 rounded-lg">
                         <div>
                             <label class="block text-gray-600 text-sm font-bold mb-2">Total Sale</label>
-                            <div class="text-lg font-semibold text-gray-900" id="totalSale">$0.00</div>
+                            <div class="text-lg font-semibold text-gray-900" id="totalSale">KES 0.00</div>
                         </div>
                         <div>
                             <label class="block text-gray-600 text-sm font-bold mb-2">Estimated Profit</label>
-                            <div class="text-lg font-semibold text-green-600" id="estimatedProfit">$0.00</div>
+                            <div class="text-lg font-semibold text-green-600" id="estimatedProfit">KES 0.00</div>
                         </div>
                     </div>
 
@@ -169,6 +168,31 @@
 
 {% block scripts %}
 <script>
+    // Number formatting functions
+    function formatNumber(number) {
+        if (number === null || number === undefined || isNaN(number)) return '0';
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    function formatCurrency(amount) {
+        if (amount === null || amount === undefined || isNaN(amount)) return 'KES 0.00';
+
+        const number = parseFloat(amount);
+
+        // Handle very small numbers and zero
+        if (number === 0) return 'KES 0.00';
+
+        // Split into integer and decimal parts
+        const parts = number.toFixed(2).split('.');
+        const integerPart = parts[0];
+        const decimalPart = parts[1];
+
+        // Add commas to integer part
+        const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+        return 'KES ' + formattedInteger + '.' + decimalPart;
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         const productSelect = document.querySelector('select[name="product_id"]');
         const quantityInput = document.querySelector('input[name="quantity_sold"]');
@@ -188,11 +212,15 @@
                     .then(response => response.json())
                     .then(data => {
                         productInfo.classList.remove('hidden');
-                        currentStock.textContent = data.current_stock;
-                        averageCost.textContent = `KES ${data.average_cost.toFixed(2)}`;
-                        suggestedPrice.textContent = `KES ${data.last_selling_price.toFixed(2)}`;
 
-                        // Set suggested price as default
+                        // Format current stock with commas
+                        currentStock.textContent = formatNumber(data.current_stock);
+
+                        // Format currency values
+                        averageCost.textContent = formatCurrency(data.average_cost);
+                        suggestedPrice.textContent = formatCurrency(data.last_selling_price);
+
+                        // Set suggested price as default (without formatting for input field)
                         if (data.last_selling_price > 0) {
                             sellingPriceInput.value = data.last_selling_price.toFixed(2);
                         }
@@ -211,15 +239,21 @@
         function calculateTotals() {
             const quantity = parseInt(quantityInput.value) || 0;
             const sellingPrice = parseFloat(sellingPriceInput.value) || 0;
-            const avgCost = parseFloat(averageCost.textContent.replace('$', '')) || 0;
+
+            // Extract average cost from the formatted text (remove commas and KES for calculation)
+            const avgCostText = averageCost.textContent;
+            const avgCostValue = avgCostText.replace(/[^\d.]/g, ''); // Remove KES and commas
+            const avgCost = parseFloat(avgCostValue) || 0;
 
             // Calculate total sale
             const totalSale = quantity * sellingPrice;
-            totalSaleElement.textContent = `KES ${totalSale.toFixed(2)}`;
+            totalSaleElement.textContent = formatCurrency(totalSale);
 
             // Calculate estimated profit: (Selling Price - Buying Cost) * Quantity
             const estimatedProfit = (sellingPrice - avgCost) * quantity;
-            estimatedProfitElement.textContent = `KES ${estimatedProfit.toFixed(2)}`;
+            estimatedProfitElement.textContent = formatCurrency(estimatedProfit);
+
+            // Set color based on profit/loss
             estimatedProfitElement.className = `text-lg font-semibold ${estimatedProfit >= 0 ? 'text-green-600' : 'text-red-600'}`;
         }
 

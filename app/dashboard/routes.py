@@ -127,27 +127,72 @@ def index():
 @login_required
 def sales_data():
     """API endpoint for sales chart data"""
-    # Last 30 days sales data
-    end_date = datetime.now().date()
-    start_date = end_date - timedelta(days=30)
-    
-    daily_sales = db.session.query(
-        func.date(StockOut.date_sold).label('date'),
-        func.sum(StockOut.total_sale).label('sales'),
-        func.sum(StockOut.profit).label('profit')
-    ).filter(
-        StockOut.date_sold >= start_date
-    ).group_by(func.date(StockOut.date_sold)).order_by('date').all()
-    
-    dates = [sale.date.strftime('%Y-%m-%d') for sale in daily_sales]
-    sales = [float(sale.sales or 0) for sale in daily_sales]
-    profits = [float(sale.profit or 0) for sale in daily_sales]
-    
-    return jsonify({
-        'dates': dates,
-        'sales': sales,
-        'profits': profits
-    })
+    try:
+        # Last 30 days sales data
+        end_date = datetime.now().date()
+        start_date = end_date - timedelta(days=30)
+        
+        print(f"Fetching sales data from {start_date} to {end_date}")
+        
+        daily_sales = db.session.query(
+            func.date(StockOut.date_sold).label('date'),
+            func.sum(StockOut.total_sale).label('sales'),
+            func.sum(StockOut.profit).label('profit')
+        ).filter(
+            StockOut.date_sold >= start_date
+        ).group_by(func.date(StockOut.date_sold)).order_by('date').all()
+        
+        print(f"Found {len(daily_sales)} days of sales data")
+        
+        # Fix: Handle both string and datetime date formats
+        dates = []
+        for sale in daily_sales:
+            if hasattr(sale.date, 'strftime'):
+                # It's a datetime object
+                dates.append(sale.date.strftime('%Y-%m-%d'))
+            else:
+                # It's already a string, use it directly
+                dates.append(str(sale.date))
+        
+        sales = [float(sale.sales or 0) for sale in daily_sales]
+        profits = [float(sale.profit or 0) for sale in daily_sales]
+        
+        # Ensure we have data for all 30 days (fill missing days with zeros)
+        all_dates = []
+        all_sales = []
+        all_profits = []
+        
+        current_date = start_date
+        while current_date <= end_date:
+            date_str = current_date.strftime('%Y-%m-%d')
+            all_dates.append(date_str)
+            
+            # Find sales for this date
+            if date_str in dates:
+                index = dates.index(date_str)
+                all_sales.append(sales[index])
+                all_profits.append(profits[index])
+            else:
+                # No sales for this date
+                all_sales.append(0.0)
+                all_profits.append(0.0)
+            
+            current_date += timedelta(days=1)
+        
+        response_data = {
+            'dates': all_dates,
+            'sales': all_sales,
+            'profits': all_profits
+        }
+        
+        print(f"Returning data for {len(all_dates)} days")
+        return jsonify(response_data)
+        
+    except Exception as e:
+        print(f"Error in sales_data endpoint: {str(e)}")
+        import traceback
+        print(traceback.format_exc())
+        return jsonify({'error': str(e)}), 500
 
 @dashboard_bp.route('/api/product-performance')
 @login_required

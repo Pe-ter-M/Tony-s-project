@@ -169,6 +169,31 @@
 
 {% block scripts %}
 <script>
+    // Number formatting functions
+    function formatNumber(number) {
+        if (number === null || number === undefined || isNaN(number)) return '0';
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    function formatCurrency(amount) {
+        if (amount === null || amount === undefined || isNaN(amount)) return 'KES 0.00';
+
+        const number = parseFloat(amount);
+
+        // Handle very small numbers and zero
+        if (number === 0) return 'KES 0.00';
+
+        // Split into integer and decimal parts
+        const parts = number.toFixed(2).split('.');
+        const integerPart = parts[0];
+        const decimalPart = parts[1];
+
+        // Add commas to integer part
+        const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+        return 'KES ' + formattedInteger + '.' + decimalPart;
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         const quantityInput = document.querySelector('input[name="quantity"]');
         const buyingCostInput = document.querySelector('input[name="buying_cost"]');
@@ -183,11 +208,11 @@
 
             // Calculate total cost
             const totalCost = quantity * buyingCost;
-            totalCostElement.textContent = `KES ${totalCost.toFixed(2)}`;
+            totalCostElement.textContent = formatCurrency(totalCost);
 
             // Calculate profit per unit
             const profitPerUnit = sellingPrice - buyingCost;
-            profitPerUnitElement.textContent = `KES ${profitPerUnit.toFixed(2)}`;
+            profitPerUnitElement.textContent = formatCurrency(profitPerUnit);
             profitPerUnitElement.className = `text-lg font-semibold ${profitPerUnit >= 0 ? 'text-green-600' : 'text-red-600'}`;
         }
 
@@ -197,6 +222,9 @@
         sellingPriceInput.addEventListener('input', calculateTotals);
 
         // Initial calculation
+        calculateTotals();
+
+        // Format any existing values on page load
         calculateTotals();
     });
 </script>

@@ -24,7 +24,8 @@
             <div class="p-6">
                 <div class="flex justify-between items-start mb-4">
                     <h3 class="text-lg font-semibold text-gray-900">{{ product.name }}</h3>
-                    <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                    <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full format-number" 
+                          data-value="{{ product.inventory.current_quantity }}">
                         {{ product.inventory.current_quantity }} in stock
                     </span>
                 </div>
@@ -44,11 +45,17 @@
                 <div class="mt-4 pt-4 border-t border-gray-200">
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-500">Avg Cost:</span>
-                        <span class="font-semibold">KES {{ "%.2f"|format(product.inventory.average_buying_cost) }}</span>
+                        <span class="font-semibold format-currency" 
+                              data-value="{{ product.inventory.average_buying_cost }}">
+                            KES {{ "%.2f"|format(product.inventory.average_buying_cost) }}
+                        </span>
                     </div>
                     <div class="flex justify-between text-sm mt-1">
                         <span class="text-gray-500">Stock Value:</span>
-                        <span class="font-semibold">KES {{ "%.2f"|format(product.inventory.get_current_value()) }}</span>
+                        <span class="font-semibold format-currency" 
+                              data-value="{{ product.inventory.get_current_value() }}">
+                            KES {{ "%.2f"|format(product.inventory.get_current_value()) }}
+                        </span>
                     </div>
                 </div>
                 {% endif %}
@@ -86,4 +93,58 @@
         {% endfor %}
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Number formatting functions - VS Code friendly
+function formatNumber(num) {
+    if (num === null || num === undefined || isNaN(num)) return '0';
+    return Number(num).toLocaleString('en-US');
+}
+
+function formatCurrency(amount) {
+    if (amount === null || amount === undefined || isNaN(amount)) return 'KES 0.00';
+    const number = Number(amount);
+    return 'KES ' + number.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function extractNumberFromText(text) {
+    if (!text) return 0;
+    const match = text.toString().replace(/[^\d.-]/g, '');
+    return match ? parseFloat(match) : 0;
+}
+
+function formatAllNumbers() {
+    try {
+        // Format regular numbers
+        document.querySelectorAll('.format-number').forEach(element => {
+            const rawValue = element.getAttribute('data-value');
+            const value = rawValue ? parseFloat(rawValue) : extractNumberFromText(element.textContent);
+            if (!isNaN(value)) {
+                const currentText = element.textContent;
+                const formattedNumber = formatNumber(value);
+                // Replace only the numeric part while keeping the text
+                element.textContent = currentText.replace(value.toString(), formattedNumber);
+            }
+        });
+
+        // Format currency values
+        document.querySelectorAll('.format-currency').forEach(element => {
+            const rawValue = element.getAttribute('data-value');
+            const value = rawValue ? parseFloat(rawValue) : extractNumberFromText(element.textContent);
+            if (!isNaN(value)) {
+                element.textContent = formatCurrency(value);
+            }
+        });
+    } catch (error) {
+        console.error('Error formatting numbers:', error);
+    }
+}
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    formatAllNumbers();
+});
+</script>
 {% endblock %}

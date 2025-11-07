@@ -11,8 +11,8 @@
             <p class="text-gray-600 mt-2">All incoming stock transactions</p>
         </div>
         <div class="flex space-x-2">
-            <a href="{{ url_for('store.stock_in') }}" 
-               class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 flex items-center justify-center">
+            <a href="{{ url_for('store.stock_in') }}"
+                class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 flex items-center justify-center">
                 <i class="fas fa-arrow-down mr-2"></i>
                 New Stock In
             </a>
@@ -24,19 +24,26 @@
         <div class="bg-green-600 px-6 py-4">
             <h2 class="text-xl font-semibold text-white">Stock In Records</h2>
         </div>
-        
+
         <div class="p-6">
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Buying Cost</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Selling Price</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Cost</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Added By</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Product</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Date</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Quantity</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Buying Cost</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Selling Price</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Total Cost</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Added By</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -49,17 +56,21 @@
                                 {{ stock_in.date_received.strftime('%Y-%m-%d %H:%M') }}
                             </td>
                             <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
+                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium"
+                                    data-format="number" data-value="{{ stock_in.quantity }}">
                                     {{ stock_in.quantity }} units
                                 </span>
                             </td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900" data-format="currency"
+                                data-value="{{ stock_in.buying_cost }}">
                                 KES {{ "%.2f"|format(stock_in.buying_cost) }}
                             </td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900" data-format="currency"
+                                data-value="{{ stock_in.selling_price }}">
                                 KES {{ "%.2f"|format(stock_in.selling_price) }}
                             </td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold"
+                                data-format="currency" data-value="{{ stock_in.total_cost }}">
                                 KES {{ "%.2f"|format(stock_in.total_cost) }}
                             </td>
                             <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -81,4 +92,69 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Number formatting functions
+    function formatNumber(number) {
+        if (number === null || number === undefined || isNaN(number)) return '0';
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    function formatCurrency(amount) {
+        if (amount === null || amount === undefined || isNaN(amount)) return 'KES 0.00';
+
+        const number = parseFloat(amount);
+
+        // Handle very small numbers and zero
+        if (number === 0) return 'KES 0.00';
+
+        // Split into integer and decimal parts
+        const parts = number.toFixed(2).split('.');
+        const integerPart = parts[0];
+        const decimalPart = parts[1];
+
+        // Add commas to integer part
+        const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+        return 'KES ' + formattedInteger + '.' + decimalPart;
+    }
+
+    function formatAllNumbers() {
+        // Format numbers
+        document.querySelectorAll('[data-format="number"]').forEach(element => {
+            const rawValue = element.getAttribute('data-value');
+            if (rawValue) {
+                const value = parseFloat(rawValue);
+                if (!isNaN(value)) {
+                    const currentText = element.textContent;
+                    const numericMatch = currentText.match(/(\d+)/);
+                    if (numericMatch) {
+                        element.textContent = currentText.replace(numericMatch[0], formatNumber(value));
+                    } else {
+                        element.textContent = formatNumber(value) + ' units';
+                    }
+                }
+            }
+        });
+
+        // Format currency
+        document.querySelectorAll('[data-format="currency"]').forEach(element => {
+            const rawValue = element.getAttribute('data-value');
+            if (rawValue) {
+                const value = parseFloat(rawValue);
+                if (!isNaN(value)) {
+                    element.textContent = formatCurrency(value);
+                }
+            }
+        });
+    }
+
+    // Apply formatting when page loads
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('Formatting numbers on Stock In History page...');
+        formatAllNumbers();
+    });
+</script>
 {% endblock %}

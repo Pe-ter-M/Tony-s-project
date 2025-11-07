@@ -20,7 +20,9 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Total Items</p>
-                    <p class="text-2xl font-bold text-gray-900">{{ total_items }}</p>
+                    <p class="text-2xl font-bold text-gray-900" data-format="number" data-value="{{ total_items }}">
+                        {{ total_items }}
+                    </p>
                 </div>
             </div>
         </div>
@@ -33,7 +35,10 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Total Inventory Value</p>
-                    <p class="text-2xl font-bold text-gray-900">KES {{ "%.2f"|format(total_inventory_value) }}</p>
+                    <p class="text-2xl font-bold text-gray-900" data-format="currency"
+                        data-value="{{ total_inventory_value }}">
+                        KES {{ "%.2f"|format(total_inventory_value) }}
+                    </p>
                 </div>
             </div>
         </div>
@@ -46,7 +51,10 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Total Products</p>
-                    <p class="text-2xl font-bold text-gray-900">{{ inventory_items|length }}</p>
+                    <p class="text-2xl font-bold text-gray-900" data-format="number"
+                        data-value="{{ inventory_items|length }}">
+                        {{ inventory_items|length }}
+                    </p>
                 </div>
             </div>
         </div>
@@ -57,18 +65,24 @@
         <div class="bg-indigo-600 px-6 py-4">
             <h2 class="text-xl font-semibold text-white">Current Inventory</h2>
         </div>
-        
+
         <div class="p-6">
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Stock</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avg Cost</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Value</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Updated</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Product</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Category</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Current Stock</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Avg Cost</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Total Value</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Last Updated</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -87,14 +101,17 @@
                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                     {% if item.current_quantity > 10 %}bg-green-100 text-green-800
                                     {% elif item.current_quantity > 0 %}bg-yellow-100 text-yellow-800
-                                    {% else %}bg-red-100 text-red-800{% endif %}">
+                                    {% else %}bg-red-100 text-red-800{% endif %}" data-format="number"
+                                    data-value="{{ item.current_quantity }}">
                                     {{ item.current_quantity }} units
                                 </span>
                             </td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900" data-format="currency"
+                                data-value="{{ item.average_buying_cost }}">
                                 KES {{ "%.2f"|format(item.average_buying_cost) }}
                             </td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900" data-format="currency"
+                                data-value="{{ item.get_current_value() }}">
                                 KES {{ "%.2f"|format(item.get_current_value()) }}
                             </td>
                             <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -118,8 +135,8 @@
 
     <!-- Quick Actions -->
     <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <a href="{{ url_for('store.add_product') }}" 
-           class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 border-l-4 border-blue-500">
+        <a href="{{ url_for('store.add_product') }}"
+            class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 border-l-4 border-blue-500">
             <div class="flex items-center">
                 <i class="fas fa-plus text-blue-500 text-xl mr-3"></i>
                 <div>
@@ -129,8 +146,8 @@
             </div>
         </a>
 
-        <a href="{{ url_for('store.stock_in') }}" 
-           class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 border-l-4 border-green-500">
+        <a href="{{ url_for('store.stock_in') }}"
+            class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 border-l-4 border-green-500">
             <div class="flex items-center">
                 <i class="fas fa-arrow-down text-green-500 text-xl mr-3"></i>
                 <div>
@@ -140,8 +157,8 @@
             </div>
         </a>
 
-        <a href="{{ url_for('store.stock_out') }}" 
-           class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 border-l-4 border-red-500">
+        <a href="{{ url_for('store.stock_out') }}"
+            class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 border-l-4 border-red-500">
             <div class="flex items-center">
                 <i class="fas fa-arrow-up text-red-500 text-xl mr-3"></i>
                 <div>
@@ -151,8 +168,8 @@
             </div>
         </a>
 
-        <a href="{{ url_for('store.products') }}" 
-           class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 border-l-4 border-purple-500">
+        <a href="{{ url_for('store.products') }}"
+            class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 border-l-4 border-purple-500">
             <div class="flex items-center">
                 <i class="fas fa-cubes text-purple-500 text-xl mr-3"></i>
                 <div>
@@ -163,4 +180,52 @@
         </a>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Simple and reliable number formatting
+    document.addEventListener('DOMContentLoaded', function () {
+        // Format numbers with commas
+        function formatNumber(num) {
+            if (num === null || num === undefined || isNaN(num)) return '0';
+            return Number(num).toLocaleString('en-US');
+        }
+
+        // Format currency with commas
+        function formatCurrency(amount) {
+            if (amount === null || amount === undefined || isNaN(amount)) return 'KES 0.00';
+            const number = Number(amount);
+            return 'KES ' + number.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        // Format all elements with data-format attribute
+        const elementsToFormat = document.querySelectorAll('[data-format]');
+
+        elementsToFormat.forEach(element => {
+            const formatType = element.getAttribute('data-format');
+            const rawValue = element.getAttribute('data-value');
+
+            if (!rawValue) return;
+
+            const value = parseFloat(rawValue);
+
+            if (isNaN(value)) return;
+
+            if (formatType === 'number') {
+                // For numbers, replace the numeric part while keeping text
+                const currentText = element.textContent;
+                const numericMatch = currentText.match(/(\d+)/);
+                if (numericMatch) {
+                    element.textContent = currentText.replace(numericMatch[0], formatNumber(value));
+                } else {
+                    element.textContent = formatNumber(value);
+                }
+            } else if (formatType === 'currency') {
+                // For currency, replace the entire content
+                element.textContent = formatCurrency(value);
+            }
+        });
+    });
+</script>
 {% endblock %}
