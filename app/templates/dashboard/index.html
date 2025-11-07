@@ -20,7 +20,7 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Total Products</p>
-                    <p class="text-2xl font-bold text-gray-900">{{ total_products }}</p>
+                    <p class="text-2xl font-bold text-gray-900" id="total-products">{{ total_products }}</p>
                 </div>
             </div>
         </div>
@@ -33,7 +33,7 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Inventory Value</p>
-                    <p class="text-2xl font-bold text-gray-900">KES {{ "%.2f"|format(total_inventory_value) }}</p>
+                    <p class="text-2xl font-bold text-gray-900" id="inventory-value">KES {{ "%.2f"|format(total_inventory_value) }}</p>
                 </div>
             </div>
         </div>
@@ -46,7 +46,7 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Items in Stock</p>
-                    <p class="text-2xl font-bold text-gray-900">{{ total_items_in_stock }}</p>
+                    <p class="text-2xl font-bold text-gray-900" id="items-stock">{{ total_items_in_stock }}</p>
                 </div>
             </div>
         </div>
@@ -59,7 +59,7 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Total Profit</p>
-                    <p class="text-2xl font-bold text-gray-900">KES {{ "%.2f"|format(total_profit) }}</p>
+                    <p class="text-2xl font-bold text-gray-900" id="total-profit">KES {{ "%.2f"|format(total_profit) }}</p>
                 </div>
             </div>
         </div>
@@ -73,11 +73,11 @@
             <div class="space-y-3">
                 <div class="flex justify-between items-center">
                     <span class="text-gray-600">Sales:</span>
-                    <span class="font-semibold text-green-600">KES {{ "%.2f"|format(daily_sales) }}</span>
+                    <span class="font-semibold text-green-600" id="daily-sales">KES {{ "%.2f"|format(daily_sales) }}</span>
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-gray-600">Profit:</span>
-                    <span class="font-semibold text-blue-600">KES {{ "%.2f"|format(daily_profit) }}</span>
+                    <span class="font-semibold text-blue-600" id="daily-profit">KES {{ "%.2f"|format(daily_profit) }}</span>
                 </div>
             </div>
         </div>
@@ -88,11 +88,11 @@
             <div class="space-y-3">
                 <div class="flex justify-between items-center">
                     <span class="text-gray-600">Sales:</span>
-                    <span class="font-semibold text-green-600">KES {{ "%.2f"|format(weekly_sales) }}</span>
+                    <span class="font-semibold text-green-600" id="weekly-sales">KES {{ "%.2f"|format(weekly_sales) }}</span>
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-gray-600">Profit:</span>
-                    <span class="font-semibold text-blue-600">KES {{ "%.2f"|format(weekly_profit) }}</span> </div>
+                    <span class="font-semibold text-blue-600" id="weekly-profit">KES {{ "%.2f"|format(weekly_profit) }}</span> </div>
             </div>
         </div>
 
@@ -102,19 +102,19 @@
             <div class="space-y-3">
                 <div class="flex justify-between items-center">
                     <span class="text-gray-600">Sales:</span>
-                    <span class="font-semibold text-green-600">KES {{ "%.2f"|format(monthly_sales) }}</span>
+                    <span class="font-semibold text-green-600" id="monthly-sales">KES {{ "%.2f"|format(monthly_sales) }}</span>
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-gray-600">Profit:</span>
-                    <span class="font-semibold text-blue-600">KES {{ "%.2f"|format(monthly_profit) }}</span>
+                    <span class="font-semibold text-blue-600" id="monthly-profit">KES {{ "%.2f"|format(monthly_profit) }}</span>
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-gray-600">Stock In:</span>
-                    <span class="font-semibold text-gray-600">{{ stock_ins_this_month }} units</span>
+                    <span class="font-semibold text-gray-600" id="stock-ins">{{ stock_ins_this_month }} units</span>
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-gray-600">Stock Out:</span>
-                    <span class="font-semibold text-gray-600">{{ stock_outs_this_month }} units</span>
+                    <span class="font-semibold text-gray-600" id="stock-outs">{{ stock_outs_this_month }} units</span>
                 </div>
             </div>
         </div>
@@ -149,9 +149,9 @@
                 <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                     <div>
                         <span class="font-medium text-gray-900">{{ product.name }}</span>
-                        <p class="text-sm text-gray-600">{{ product.total_sold }} units sold</p>
+                        <p class="text-sm text-gray-600" id="top-product-sold-{{ loop.index }}">{{ product.total_sold }} units sold</p>
                     </div>
-                    <span class="font-semibold text-green-600">KES {{ "%.2f"|format(product.total_profit or 0) }}</span>
+                    <span class="font-semibold text-green-600" id="top-product-profit-{{ loop.index }}">KES {{ "%.2f"|format(product.total_profit or 0) }}</span>
                 </div>
                 {% else %}
                 <p class="text-gray-500 text-center py-4">No sales data available</p>
@@ -167,9 +167,9 @@
                 <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                     <div>
                         <span class="font-medium text-gray-900">{{ product.name }}</span>
-                        <p class="text-sm text-gray-600">{{ product.total_sold }} units sold</p>
+                        <p class="text-sm text-gray-600" id="least-product-sold-{{ loop.index }}">{{ product.total_sold }} units sold</p>
                     </div>
-                    <span class="font-semibold text-green-600">KES {{ "%.2f"|format(product.total_profit or 0) }}</span>
+                    <span class="font-semibold text-green-600" id="least-product-profit-{{ loop.index }}">KES {{ "%.2f"|format(product.total_profit or 0) }}</span>
                 </div>
                 {% else %}
                 <p class="text-gray-500 text-center py-4">No sales data available</p>
@@ -192,7 +192,7 @@
                     {% for item in low_stock_items %}
                     <div class="flex justify-between items-center p-2 bg-yellow-50 rounded">
                         <span class="text-sm font-medium">{{ item.product.name }}</span>
-                        <span class="text-sm text-yellow-700 font-semibold">{{ item.current_quantity }} left</span>
+                        <span class="text-sm text-yellow-700 font-semibold" id="low-stock-{{ loop.index }}">{{ item.current_quantity }} left</span>
                     </div>
                     {% endfor %}
                 </div>
@@ -232,7 +232,7 @@
                         <div class="flex justify-between items-center text-sm">
                             <span class="truncate">{{ sale.product.name }}</span>
                             <div class="text-right">
-                                <span class="font-semibold">KES {{ "%.2f"|format(sale.total_sale) }}</span>
+                                <span class="font-semibold" id="recent-sale-{{ loop.index }}">KES {{ "%.2f"|format(sale.total_sale) }}</span>
                                 <p class="text-xs text-gray-500">{{ sale.date_sold.strftime('%H:%M') }}</p>
                             </div>
                         </div>
@@ -252,7 +252,7 @@
                         <div class="flex justify-between items-center text-sm">
                             <span class="truncate">{{ stock_in.product.name }}</span>
                             <div class="text-right">
-                                <span class="font-semibold">{{ stock_in.quantity }} units</span>
+                                <span class="font-semibold" id="recent-stock-in-{{ loop.index }}">{{ stock_in.quantity }} units</span>
                                 <p class="text-xs text-gray-500">{{ stock_in.date_received.strftime('%H:%M') }}</p>
                             </div>
                         </div>
@@ -283,8 +283,8 @@
                     {% for product in profitable_products %}
                     <tr class="hover:bg-gray-50">
                         <td class="px-4 py-3 text-sm font-medium text-gray-900">{{ product.name }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">KES {{ "%.2f"|format(product.avg_selling_price or 0) }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">KES {{ "%.2f"|format(product.avg_buying_cost or 0) }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900" id="avg-price-{{ loop.index }}">KES {{ "%.2f"|format(product.avg_selling_price or 0) }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900" id="avg-cost-{{ loop.index }}">KES {{ "%.2f"|format(product.avg_buying_cost or 0) }}</td>
                         <td class="px-4 py-3 text-sm font-semibold {% if (product.profit_margin or 0) > 0 %}text-green-600{% else %}text-red-600{% endif %}">
                             {{ "%.1f"|format(product.profit_margin or 0) }}%
                         </td>
@@ -304,8 +304,118 @@
 {% block scripts %}
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
+<>
+// Number formatting functions
+function formatNumber(num) {
+    if (num === null || num === undefined) return '0';
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function formatCurrency(amount) {
+    if (amount === null || amount === undefined) return 'KES 0.00';
+    const number = parseFloat(amount);
+    return 'KES ' + number.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function extractNumberFromText(text) {
+    // Extract numeric value from text that might contain currency symbols or text
+    const match = text.replace(/[^\d.-]/g, '');
+    return match ? parseFloat(match) : 0;
+}
+
+function formatAllNumbers() {
+    // Format numbers in summary cards
+    document.getElementById('total-products').textContent = formatNumber(extractNumberFromText(document.getElementById('total-products').textContent));
+    document.getElementById('items-stock').textContent = formatNumber(extractNumberFromText(document.getElementById('items-stock').textContent));
+    document.getElementById('stock-ins').textContent = formatNumber(extractNumberFromText(document.getElementById('stock-ins').textContent)) + ' units';
+    document.getElementById('stock-outs').textContent = formatNumber(extractNumberFromText(document.getElementById('stock-outs').textContent)) + ' units';
+
+    // Format currency values
+    const currencyElements = [
+        'inventory-value', 'total-profit', 'daily-sales', 'daily-profit',
+        'weekly-sales', 'weekly-profit', 'monthly-sales', 'monthly-profit'
+    ];
+    
+    currencyElements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            const amount = extractNumberFromText(element.textContent);
+            element.textContent = formatCurrency(amount);
+        }
+    });
+
+    // Format product quantities and profits
+    {% for product in top_products %}
+    const topSold{{ loop.index }} = document.getElementById('top-product-sold-{{ loop.index }}');
+    const topProfit{{ loop.index }} = document.getElementById('top-product-profit-{{ loop.index }}');
+    if (topSold{{ loop.index }}) {
+        const quantity = extractNumberFromText(topSold{{ loop.index }}.textContent);
+        topSold{{ loop.index }}.textContent = formatNumber(quantity) + ' units sold';
+    }
+    if (topProfit{{ loop.index }}) {
+        const profit = extractNumberFromText(topProfit{{ loop.index }}.textContent);
+        topProfit{{ loop.index }}.textContent = formatCurrency(profit);
+    }
+    {% endfor %}
+
+    {% for product in least_products %}
+    const leastSold{{ loop.index }} = document.getElementById('least-product-sold-{{ loop.index }}');
+    const leastProfit{{ loop.index }} = document.getElementById('least-product-profit-{{ loop.index }}');
+    if (leastSold{{ loop.index }}) {
+        const quantity = extractNumberFromText(leastSold{{ loop.index }}.textContent);
+        leastSold{{ loop.index }}.textContent = formatNumber(quantity) + ' units sold';
+    }
+    if (leastProfit{{ loop.index }}) {
+        const profit = extractNumberFromText(leastProfit{{ loop.index }}.textContent);
+        leastProfit{{ loop.index }}.textContent = formatCurrency(profit);
+    }
+    {% endfor %}
+
+    // Format low stock quantities
+    {% for item in low_stock_items %}
+    const lowStock{{ loop.index }} = document.getElementById('low-stock-{{ loop.index }}');
+    if (lowStock{{ loop.index }}) {
+        const quantity = extractNumberFromText(lowStock{{ loop.index }}.textContent);
+        lowStock{{ loop.index }}.textContent = formatNumber(quantity) + ' left';
+    }
+    {% endfor %}
+
+    // Format recent sales and stock ins
+    {% for sale in recent_sales %}
+    const recentSale{{ loop.index }} = document.getElementById('recent-sale-{{ loop.index }}');
+    if (recentSale{{ loop.index }}) {
+        const amount = extractNumberFromText(recentSale{{ loop.index }}.textContent);
+        recentSale{{ loop.index }}.textContent = formatCurrency(amount);
+    }
+    {% endfor %}
+
+    {% for stock_in in recent_stock_ins %}
+    const recentStockIn{{ loop.index }} = document.getElementById('recent-stock-in-{{ loop.index }}');
+    if (recentStockIn{{ loop.index }}) {
+        const quantity = extractNumberFromText(recentStockIn{{ loop.index }}.textContent);
+        recentStockIn{{ loop.index }}.textContent = formatNumber(quantity) + ' units';
+    }
+    {% endfor %}
+
+    // Format profit margin table
+    {% for product in profitable_products %}
+    const avgPrice{{ loop.index }} = document.getElementById('avg-price-{{ loop.index }}');
+    const avgCost{{ loop.index }} = document.getElementById('avg-cost-{{ loop.index }}');
+    if (avgPrice{{ loop.index }}) {
+        const price = extractNumberFromText(avgPrice{{ loop.index }}.textContent);
+        avgPrice{{ loop.index }}.textContent = formatCurrency(price);
+    }
+    if (avgCost{{ loop.index }}) {
+        const cost = extractNumberFromText(avgCost{{ loop.index }}.textContent);
+        avgCost{{ loop.index }}.textContent = formatCurrency(cost);
+    }
+    {% endfor %}
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+    // Format all numbers on page load
+    formatAllNumbers();
+
     // Sales Chart
     fetch('/dashboard/api/sales-data')
         .then(response => response.json())
@@ -339,7 +449,26 @@ document.addEventListener('DOMContentLoaded', function() {
                     maintainAspectRatio: false,
                     scales: {
                         y: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'KES ' + formatNumber(value);
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += 'KES ' + formatNumber(context.parsed.y);
+                                    return label;
+                                }
+                            }
                         }
                     }
                 }
@@ -368,7 +497,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     maintainAspectRatio: false,
                     scales: {
                         y: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatNumber(value);
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Quantity: ' + formatNumber(context.parsed.y);
+                                }
+                            }
                         }
                     }
                 }
