@@ -156,6 +156,7 @@ def stock_out():
     
     return render_template('store/stock_out.html', form=form)
 
+
 @store_bp.route('/stock/out/history')
 @login_required
 def stock_out_history():
@@ -163,6 +164,14 @@ def stock_out_history():
     stock_outs = StockOut.query.join(Product).order_by(StockOut.date_sold.desc()).all()
     total_profit = sum(so.profit for so in stock_outs)
     total_sales = sum(so.total_sale for so in stock_outs)
+    
+    # Add buying price data to each stock_out
+    for stock_out in stock_outs:
+        inventory = Inventory.query.filter_by(product_id=stock_out.product_id).first()
+        if inventory:
+            stock_out.buying_price = inventory.average_buying_cost
+        else:
+            stock_out.buying_price = 0
     
     return render_template('store/stock_out_history.html', 
                          stock_outs=stock_outs,
