@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt - TONIS SUPPLIERS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @media print {
+            body { margin: 0; padding: 0; }
+            .no-print { display: none !important; }
+            .receipt-container { 
+                width: 58mm !important; 
+                margin: 0 !important;
+                padding: 8px !important;
+                box-shadow: none !important;
+            }
+            @page { margin: 0; size: auto; }
+        }
+        
+        .receipt-container {
+            width: 58mm;
+            min-height: 100vh;
+            margin: 0 auto;
+            padding: 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.2;
+            background: white;
+        }
+        
+        .divider {
+            border-top: 1px dashed #000;
+            margin: 8px 0;
+        }
+        
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .text-bold { font-weight: bold; }
+        .text-sm { font-size: 10px; }
+        .text-xs { font-size: 9px; }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Print Controls -->
+    <div class="no-print bg-white shadow-lg p-4 mb-4">
+        <div class="max-w-2xl mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-bold text-gray-800">Receipt Preview</h1>
+                <p class="text-gray-600">Previewing receipt for sale #{{ stock_out.id }}</p>
+            </div>
+            <div class="flex space-x-2">
+                <button onclick="window.history.back()" 
+                    class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+                    <i class="fas fa-arrow-left mr-2"></i>Back
+                </button>
+                <button onclick="window.print()" 
+                    class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                    <i class="fas fa-print mr-2"></i>Print Receipt
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt Content -->
+    <div class="receipt-container bg-white shadow-lg mx-auto">
+        <!-- Shop Header -->
+        <div class="text-center mb-3">
+            <div class="text-bold text-sm">TONIS SUPPLIERS SHOP</div>
+            <div class="text-xs">Motel Building Next to Silent Lodge</div>
+            <div class="text-xs">Dealers in Mobile Phones, Electric Mobile Phone</div>
+            <div class="text-xs">Accessories & Computer Accessories</div>
+            <div class="text-xs mt-1">Tel: {{ shop_phone }}</div>
+            <div class="text-xs">Email: {{ shop_email }}</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Receipt Info -->
+        <div class="mb-2">
+            <div class="flex justify-between">
+                <span>Receipt #:</span>
+                <span>{{ stock_out.id }}</span>
+            </div>
+            <div class="flex justify-between">
+                <span>Date:</span>
+                <span>{{ stock_out.date_sold.strftime('%Y-%m-%d %H:%M') }}</span>
+            </div>
+            <div class="flex justify-between">
+                <span>Cashier:</span>
+                <span>{{ stock_out.user.username }}</span>
+            </div>
+            {% if stock_out.customer_info and stock_out.customer_info != 'N/A' %}
+            <div class="flex justify-between">
+                <span>Customer:</span>
+                <span>{{ stock_out.customer_info }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Items -->
+        <div class="mb-3">
+            <div class="text-bold text-center mb-1">ITEM SOLD</div>
+            <div class="flex justify-between text-bold">
+                <span>ITEM</span>
+                <span>QTY × PRICE</span>
+                <span>TOTAL</span>
+            </div>
+            <div class="divider"></div>
+            
+            <div class="flex justify-between mb-1">
+                <span class="flex-1">{{ stock_out.product.name }}</span>
+                <span class="px-2">{{ stock_out.quantity_sold }} × {{ "%.2f"|format(stock_out.selling_price) }}</span>
+                <span class="text-right">{{ "%.2f"|format(stock_out.total_sale) }}</span>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Totals -->
+        <div class="mb-3">
+            <div class="flex justify-between text-bold">
+                <span>SUB TOTAL:</span>
+                <span>KES {{ "%.2f"|format(stock_out.total_sale) }}</span>
+            </div>
+            <div class="flex justify-between">
+                <span>VAT (0%):</span>
+                <span>KES 0.00</span>
+            </div>
+            <div class="divider"></div>
+            <div class="flex justify-between text-bold">
+                <span>TOTAL:</span>
+                <span>KES {{ "%.2f"|format(stock_out.total_sale) }}</span>
+            </div>
+            <div class="flex justify-between">
+                <span>PAID:</span>
+                <span>KES {{ "%.2f"|format(stock_out.total_sale) }}</span>
+            </div>
+            <div class="flex justify-between text-bold">
+                <span>BALANCE:</span>
+                <span>KES 0.00</span>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Payment Method -->
+        <div class="mb-3 text-center">
+            <div class="text-bold">Payment Method: CASH</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Footer -->
+        <div class="text-center text-xs">
+            <div class="mb-1">Thank you for your business!</div>
+            <div>Goods sold are not returnable</div>
+            <div>unless faulty</div>
+            <div class="mt-2">*** {{ stock_out.date_sold.strftime('%d/%m/%Y %H:%M') }} ***</div>
+        </div>
+
+        <!-- Barcode Area (Optional) -->
+        <div class="text-center mt-4">
+            <div class="text-xs">************************</div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-print if URL has ?print=true
+        if (new URLSearchParams(window.location.search).has('print')) {
+            window.print();
+        }
+
+        // Format currency display
+        document.addEventListener('DOMContentLoaded', function() {
+            const currencyElements = document.querySelectorAll('[data-format]');
+            currencyElements.forEach(el => {
+                const value = parseFloat(el.getAttribute('data-value'));
+                if (!isNaN(value)) {
+                    el.textContent = 'KES ' + value.toFixed(2);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -185,3 +185,16 @@ def get_product_details(product_id):
         'average_cost': inventory.average_buying_cost if inventory else 0,
         'last_selling_price': last_stock_in.selling_price if last_stock_in else 0
     })
+
+@store_bp.route('/receipt/<int:stock_out_id>')
+@login_required
+def receipt(stock_out_id):
+    """Generate receipt for a specific sale"""
+    stock_out = StockOut.query.get_or_404(stock_out_id)
+    
+    return render_template('store/receipt.html', 
+                         stock_out=stock_out,
+                         shop_name="TONIS SUPPLIERS SHOP",
+                         shop_location="Motel Building Next to Silent Lodge",
+                         shop_phone="+254 7XX XXX XXX",
+                         shop_email="info@tonissuppliers.com")
