@@ -2,7 +2,7 @@
 {% block title %}Stock Out{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto">
+<div class="max-w-6xl mx-auto">
     <!-- Header -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <div>
@@ -18,7 +18,18 @@
         </div>
     </div>
 
-    <!-- Form Card -->
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="mb-4 p-4 rounded-lg {% if category == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Stock Out Form -->
     <div class="bg-white shadow-lg rounded-lg overflow-hidden">
         <div class="bg-red-600 px-6 py-4">
             <h2 class="text-xl font-semibold text-white">Sell Products</h2>
@@ -28,138 +39,129 @@
             <form method="POST" action="" class="space-y-6" id="stockOutForm">
                 {{ form.hidden_tag() }}
 
-                <!-- Product Selection -->
+                <!-- Customer Information -->
                 <div>
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="product_id">
-                        {{ form.product_id.label }}
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="customer_name">
+                        Customer Name
                     </label>
-                    {% if form.product_id.errors %}
-                    {{ form.product_id(class="w-full shadow appearance-none border border-red-500 rounded py-3 px-4
-                    text-gray-700 leading-tight focus:outline-none focus:shadow-outline") }}
-                    <p class="text-red-500 text-xs italic mt-1">
-                        {% for error in form.product_id.errors %}
-                        {{ error }}
-                        {% endfor %}
-                    </p>
-                    {% else %}
-                    {{ form.product_id(class="w-full shadow appearance-none border rounded py-3 px-4 text-gray-700
-                    leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500") }}
-                    {% endif %}
-                    <p class="text-gray-500 text-xs mt-1">Only products with available stock are shown</p>
+                    <input type="text" id="customer_name" name="customer_name"
+                        class="w-full shadow appearance-none border rounded py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500"
+                        placeholder="Enter customer name" value="Customer X">
+                    <p class="text-gray-500 text-xs mt-1">Enter customer name or leave as 'Customer X' for anonymous sales</p>
                 </div>
 
-                <!-- Product Info (will be populated by JavaScript) -->
-                <div id="productInfo" class="bg-blue-50 border border-blue-200 rounded-lg p-4 hidden">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                        <div>
-                            <span class="text-blue-600 font-medium">Current Stock:</span>
-                            <span id="currentStock" class="ml-2">0</span>
-                        </div>
-                        <div>
-                            <span class="text-blue-600 font-medium">Average Cost:</span>
-                            <span id="averageCost" class="ml-2">KES 0.00</span>
-                        </div>
-                        <div>
-                            <span class="text-blue-600 font-medium">Suggested Price:</span>
-                            <span id="suggestedPrice" class="ml-2">KES 0.00</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quantity and Prices -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Quantity -->
-                    <div>
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="quantity_sold">
-                            {{ form.quantity_sold.label }}
-                        </label>
-                        {% if form.quantity_sold.errors %}
-                        {{ form.quantity_sold(class="w-full shadow appearance-none border border-red-500 rounded py-3
-                        px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline") }}
-                        <p class="text-red-500 text-xs italic mt-1">
-                            {% for error in form.quantity_sold.errors %}
-                            {{ error }}
-                            {% endfor %}
-                        </p>
-                        {% else %}
-                        {{ form.quantity_sold(class="w-full shadow appearance-none border rounded py-3 px-4
-                        text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500",
-                        min="1") }}
-                        {% endif %}
-                    </div>
-
-                    <!-- Selling Price -->
-                    <div>
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="selling_price">
-                            {{ form.selling_price.label }}
-                        </label>
-                        <div class="relative">
-                            <span class="absolute inset-y-0 left-0 flex items-center px-3 text-gray-500">KES</span>
-                            {% if form.selling_price.errors %}
-                            {{ form.selling_price(class="w-full shadow appearance-none border border-red-500 rounded
-                            py-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pl-12",
-                            step="0.01", min="0.01") }}
-                            {% else %}
-                            {{ form.selling_price(class="w-full shadow appearance-none rounded py-3 border text-gray-700
-                            leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500 pl-12",
-                            step="0.01", min="0.01") }}
-                            {% endif %}
-                        </div>
-                        {% if form.selling_price.errors %}
-                        <p class="text-red-500 text-xs italic mt-1">
-                            {% for error in form.selling_price.errors %}
-                            {{ error }}
-                            {% endfor %}
-                        </p>
-                        {% endif %}
-                    </div>
-
-                    <!-- Auto-calculated Fields -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 p-4 rounded-lg">
-                        <div>
-                            <label class="block text-gray-600 text-sm font-bold mb-2">Total Sale</label>
-                            <div class="text-lg font-semibold text-gray-900" id="totalSale">KES 0.00</div>
-                        </div>
-                        <div>
-                            <label class="block text-gray-600 text-sm font-bold mb-2">Estimated Profit</label>
-                            <div class="text-lg font-semibold text-green-600" id="estimatedProfit">KES 0.00</div>
-                        </div>
-                    </div>
-
-                    <!-- Customer Info -->
-                    <div>
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="customer_info">
-                            {{ form.customer_info.label }}
-                        </label>
-                        {{ form.customer_info(class="w-full shadow appearance-none border rounded py-3 px-4
-                        text-gray-700
-                        leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500",
-                        placeholder="Customer name or details (optional)") }}
-                    </div>
-
-                    <!-- Notes -->
-                    <div>
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="notes">
-                            {{ form.notes.label }}
-                        </label>
-                        {{ form.notes(class="w-full shadow appearance-none border rounded py-3 px-4 text-gray-700
-                        leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500", rows="3",
-                        placeholder="Additional notes (optional)") }}
-                    </div>
-
-                    <!-- Submit Buttons -->
-                    <div
-                        class="flex flex-col sm:flex-row items-center justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-200">
-                        <a href="{{ url_for('store.index') }}"
-                            class="w-full sm:w-auto bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline transition duration-300 text-center">
-                            Cancel
-                        </a>
-                        <button type="submit"
-                            class="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline transition duration-300 flex items-center justify-center">
-                            <i class="fas fa-arrow-up mr-2"></i>
-                            Sell Stock
+                <!-- Products Section -->
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Products</h3>
+                        <button type="button" id="addProductBtn" 
+                            class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 flex items-center">
+                            <i class="fas fa-plus mr-2"></i>
+                            Add Another Product
                         </button>
                     </div>
+
+                    <!-- Products Container -->
+                    <div id="productsContainer" class="space-y-4">
+                        <!-- Product rows will be added here dynamically -->
+                    </div>
+
+                    <!-- Order Summary -->
+                    <div id="summarySection" class="mt-6 p-4 bg-gray-50 rounded-lg">
+                        <h4 class="text-md font-semibold text-gray-900 mb-3">Order Summary</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                            <div>
+                                <span class="text-gray-600 font-medium">Total Products:</span>
+                                <span id="totalProducts" class="ml-2 font-semibold">0</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-600 font-medium">Total Quantity:</span>
+                                <span id="totalQuantity" class="ml-2 font-semibold">0</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-600 font-medium">Total Value:</span>
+                                <span id="totalValue" class="ml-2 font-semibold text-green-600">KES 0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Method Section -->
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Payment Method</h3>
+                    
+                    <!-- Payment Method Selection -->
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Select Payment Method *</label>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <label class="flex items-center">
+                                <input type="radio" name="payment_method" value="cash" class="payment-method-radio mr-2" checked>
+                                <span class="text-gray-700">Cash Only</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="payment_method" value="mobile_money" class="payment-method-radio mr-2">
+                                <span class="text-gray-700">Mobile Money Only</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="payment_method" value="both" class="payment-method-radio mr-2">
+                                <span class="text-gray-700">Both Methods</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Payment Amounts -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Cash Amount -->
+                        <div id="cashAmountSection">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="cash_amount">
+                                Cash Amount (KES) *
+                            </label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center px-3 text-gray-500">KES</span>
+                                <input type="number" id="cash_amount" name="cash_amount" step="0.01" min="0"
+                                    class="cash-input w-full shadow appearance-none border rounded py-3 pl-12 pr-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500"
+                                    value="0.00" required>
+                            </div>
+                        </div>
+
+                        <!-- Mobile Money Amount -->
+                        <div id="mobileMoneyAmountSection" class="hidden">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="mobile_money_amount">
+                                Mobile Money Amount (KES) *
+                            </label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center px-3 text-gray-500">KES</span>
+                                <input type="number" id="mobile_money_amount" name="mobile_money_amount" step="0.01" min="0"
+                                    class="mobile-money-input w-full shadow appearance-none border rounded py-3 pl-12 pr-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500"
+                                    value="0.00">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Payment Display -->
+                    <div class="mt-4 p-3 bg-blue-50 rounded-lg">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700 font-semibold">Total Payment:</span>
+                            <span id="totalPayment" class="text-xl font-bold text-green-600">KES 0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hidden field for product data -->
+                <input type="hidden" name="product_data" id="productData">
+
+                <!-- Submit Button -->
+                <div class="flex flex-col sm:flex-row items-center justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-200">
+                    <a href="{{ url_for('store.index') }}"
+                        class="w-full sm:w-auto bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline transition duration-300 text-center">
+                        Cancel
+                    </a>
+                    <button type="submit"
+                        class="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline transition duration-300 flex items-center justify-center">
+                        <i class="fas fa-arrow-up mr-2"></i>
+                        Complete Sale
+                    </button>
+                </div>
             </form>
         </div>
     </div>
@@ -168,101 +170,307 @@
 
 {% block scripts %}
 <script>
-    // Number formatting functions
-    function formatNumber(number) {
-        if (number === null || number === undefined || isNaN(number)) return '0';
-        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
-
-    function formatCurrency(amount) {
-        if (amount === null || amount === undefined || isNaN(amount)) return 'KES 0.00';
-
-        const number = parseFloat(amount);
-
-        // Handle very small numbers and zero
-        if (number === 0) return 'KES 0.00';
-
-        // Split into integer and decimal parts
-        const parts = number.toFixed(2).split('.');
-        const integerPart = parts[0];
-        const decimalPart = parts[1];
-
-        // Add commas to integer part
-        const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-        return 'KES ' + formattedInteger + '.' + decimalPart;
-    }
+    // Product management
+    let productCounter = 0;
 
     document.addEventListener('DOMContentLoaded', function () {
-        const productSelect = document.querySelector('select[name="product_id"]');
-        const quantityInput = document.querySelector('input[name="quantity_sold"]');
-        const sellingPriceInput = document.querySelector('input[name="selling_price"]');
-        const productInfo = document.getElementById('productInfo');
-        const currentStock = document.getElementById('currentStock');
-        const averageCost = document.getElementById('averageCost');
-        const suggestedPrice = document.getElementById('suggestedPrice');
-        const totalSaleElement = document.getElementById('totalSale');
-        const estimatedProfitElement = document.getElementById('estimatedProfit');
+        // Add first product row
+        addProductRow();
 
-        // Load product details when product is selected
-        productSelect.addEventListener('change', function () {
-            const productId = this.value;
-            if (productId) {
-                fetch(`/store/api/product/${productId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        productInfo.classList.remove('hidden');
+        // Event listeners
+        document.getElementById('addProductBtn').addEventListener('click', addProductRow);
+        
+        // Payment method change listeners
+        document.querySelectorAll('.payment-method-radio').forEach(radio => {
+            radio.addEventListener('change', handlePaymentMethodChange);
+        });
+        
+        // Initial payment method setup
+        handlePaymentMethodChange.call(document.querySelector('input[name="payment_method"]:checked'));
+    });
 
-                        // Format current stock with commas
-                        currentStock.textContent = formatNumber(data.current_stock);
+    // Add a new product row
+    function addProductRow() {
+        const productsContainer = document.getElementById('productsContainer');
+        const rowId = `product_${productCounter}`;
+        
+        const row = document.createElement('div');
+        row.className = 'product-row border border-gray-200 rounded-lg p-4 bg-white';
+        row.innerHTML = `
+            <div class="flex flex-col md:flex-row md:items-center gap-4">
+                <!-- Product Selection -->
+                <div class="flex-1">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Product *</label>
+                    <select name="product_id" class="product-select w-full shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500" required>
+                        <option value="">Select a product</option>
+                        {% for product_id, product_name in form.product_id.choices %}
+                            {% if product_id != 0 %}
+                            <option value="{{ product_id }}">{{ product_name }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
 
-                        // Format currency values
-                        averageCost.textContent = formatCurrency(data.average_cost);
-                        suggestedPrice.textContent = formatCurrency(data.last_selling_price);
+                <!-- Quantity -->
+                <div class="w-32">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Quantity *</label>
+                    <input type="number" name="quantity" min="1" value="1" 
+                        class="quantity-input w-full shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500" required>
+                </div>
 
-                        // Set suggested price as default (without formatting for input field)
-                        if (data.last_selling_price > 0) {
-                            sellingPriceInput.value = data.last_selling_price.toFixed(2);
-                        }
+                <!-- Selling Price -->
+                <div class="w-40">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Selling Price *</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center px-2 text-gray-500 text-sm">KES</span>
+                        <input type="number" name="selling_price" step="0.01" min="0.01" 
+                            class="price-input w-full shadow appearance-none border rounded py-2 pl-8 pr-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500" required>
+                    </div>
+                </div>
 
-                        // Update calculations
-                        calculateTotals();
-                    })
-                    .catch(error => {
-                        console.error('Error fetching product details:', error);
-                    });
-            } else {
-                productInfo.classList.add('hidden');
-            }
+                <!-- Product Info -->
+                <div class="flex-1">
+                    <div class="product-info text-sm text-gray-600 space-y-1">
+                        <div>Stock: <span class="stock-info">-</span></div>
+                        <div>Cost: <span class="cost-info">-</span></div>
+                    </div>
+                </div>
+
+                <!-- Remove Button (only show if more than one row) -->
+                <div class="flex items-end">
+                    <button type="button" class="remove-product bg-red-500 hover:bg-red-600 text-white py-2 px-3 rounded focus:outline-none focus:shadow-outline transition duration-300 ${productCounter === 0 ? 'hidden' : ''}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Row Summary -->
+            <div class="mt-3 pt-3 border-t border-gray-100">
+                <div class="flex justify-between text-sm">
+                    <span>Total: <span class="row-total font-semibold text-green-600">KES 0.00</span></span>
+                </div>
+            </div>
+        `;
+
+        productsContainer.appendChild(row);
+        productCounter++;
+
+        // Add event listeners to the new row
+        const productSelect = row.querySelector('.product-select');
+        const quantityInput = row.querySelector('.quantity-input');
+        const priceInput = row.querySelector('.price-input');
+        const removeBtn = row.querySelector('.remove-product');
+
+        productSelect.addEventListener('change', function() {
+            updateProductInfo(row);
+            calculateRowTotal(row);
+            updateOrderSummary();
+            updatePaymentAmounts();
         });
 
-        function calculateTotals() {
-            const quantity = parseInt(quantityInput.value) || 0;
-            const sellingPrice = parseFloat(sellingPriceInput.value) || 0;
+        quantityInput.addEventListener('input', function() {
+            calculateRowTotal(row);
+            updateOrderSummary();
+            updatePaymentAmounts();
+        });
 
-            // Extract average cost from the formatted text (remove commas and KES for calculation)
-            const avgCostText = averageCost.textContent;
-            const avgCostValue = avgCostText.replace(/[^\d.]/g, ''); // Remove KES and commas
-            const avgCost = parseFloat(avgCostValue) || 0;
+        priceInput.addEventListener('input', function() {
+            calculateRowTotal(row);
+            updateOrderSummary();
+            updatePaymentAmounts();
+        });
 
-            // Calculate total sale
-            const totalSale = quantity * sellingPrice;
-            totalSaleElement.textContent = formatCurrency(totalSale);
+        removeBtn.addEventListener('click', function() {
+            row.remove();
+            updateOrderSummary();
+            updatePaymentAmounts();
+            updateRemoveButtonsVisibility();
+        });
 
-            // Calculate estimated profit: (Selling Price - Buying Cost) * Quantity
-            const estimatedProfit = (sellingPrice - avgCost) * quantity;
-            estimatedProfitElement.textContent = formatCurrency(estimatedProfit);
+        updateOrderSummary();
+        updateRemoveButtonsVisibility();
+        updateProductData();
+    }
 
-            // Set color based on profit/loss
-            estimatedProfitElement.className = `text-lg font-semibold ${estimatedProfit >= 0 ? 'text-green-600' : 'text-red-600'}`;
+    // Update product information when product is selected
+    function updateProductInfo(row) {
+        const productSelect = row.querySelector('.product-select');
+        const productId = productSelect.value;
+        const stockInfo = row.querySelector('.stock-info');
+        const costInfo = row.querySelector('.cost-info');
+        const priceInput = row.querySelector('.price-input');
+
+        if (productId) {
+            fetch(`/store/api/product-details/${productId}`)
+                .then(response => response.json())
+                .then(product => {
+                    stockInfo.textContent = product.current_stock;
+                    costInfo.textContent = `KES ${product.average_cost.toFixed(2)}`;
+                    
+                    // Set suggested price as default
+                    if (product.suggested_price > 0) {
+                        priceInput.value = product.suggested_price.toFixed(2);
+                    } else if (product.last_selling_price > 0) {
+                        priceInput.value = product.last_selling_price.toFixed(2);
+                    } else {
+                        priceInput.value = (product.average_cost * 1.2).toFixed(2); // 20% markup
+                    }
+                    
+                    calculateRowTotal(row);
+                    updateOrderSummary();
+                    updatePaymentAmounts();
+                    updateProductData();
+                })
+                .catch(error => {
+                    console.error('Error fetching product details:', error);
+                    stockInfo.textContent = 'Error';
+                    costInfo.textContent = 'Error';
+                });
+        } else {
+            stockInfo.textContent = '-';
+            costInfo.textContent = '-';
         }
+    }
 
-        // Add event listeners for real-time calculation
-        quantityInput.addEventListener('input', calculateTotals);
-        sellingPriceInput.addEventListener('input', calculateTotals);
+    // Calculate total for a single product row
+    function calculateRowTotal(row) {
+        const quantity = parseInt(row.querySelector('.quantity-input').value) || 0;
+        const price = parseFloat(row.querySelector('.price-input').value) || 0;
+        const total = quantity * price;
 
-        // Initial calculation
-        calculateTotals();
+        row.querySelector('.row-total').textContent = `KES ${total.toFixed(2)}`;
+        return total;
+    }
+
+    // Update the overall order summary
+    function updateOrderSummary() {
+        const rows = document.querySelectorAll('.product-row');
+        let totalProducts = 0;
+        let totalQuantity = 0;
+        let totalValue = 0;
+
+        rows.forEach(row => {
+            const quantity = parseInt(row.querySelector('.quantity-input').value) || 0;
+            const price = parseFloat(row.querySelector('.price-input').value) || 0;
+            const total = quantity * price;
+
+            totalProducts++;
+            totalQuantity += quantity;
+            totalValue += total;
+        });
+
+        document.getElementById('totalProducts').textContent = totalProducts;
+        document.getElementById('totalQuantity').textContent = totalQuantity;
+        document.getElementById('totalValue').textContent = `KES ${totalValue.toFixed(2)}`;
+        
+        return totalValue;
+    }
+
+    // Update payment amounts based on total order value
+    function updatePaymentAmounts() {
+        const totalValue = updateOrderSummary();
+        const paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
+        
+        if (paymentMethod === 'cash') {
+            document.getElementById('cash_amount').value = totalValue.toFixed(2);
+        } else if (paymentMethod === 'mobile_money') {
+            document.getElementById('mobile_money_amount').value = totalValue.toFixed(2);
+        } else if (paymentMethod === 'both') {
+            // For both methods, don't auto-update to allow manual adjustment
+            const cashAmount = parseFloat(document.getElementById('cash_amount').value) || 0;
+            const mobileAmount = parseFloat(document.getElementById('mobile_money_amount').value) || 0;
+            if (cashAmount === 0 && mobileAmount === 0) {
+                // Only set initial split if both are zero
+                const half = totalValue / 2;
+                document.getElementById('cash_amount').value = half.toFixed(2);
+                document.getElementById('mobile_money_amount').value = half.toFixed(2);
+            }
+        }
+        
+        updateTotalPayment();
+    }
+
+    // Handle payment method changes
+    function handlePaymentMethodChange() {
+        const method = this.value;
+        const cashSection = document.getElementById('cashAmountSection');
+        const mobileSection = document.getElementById('mobileMoneyAmountSection');
+        const totalValue = updateOrderSummary();
+
+        if (method === 'cash') {
+            cashSection.classList.remove('hidden');
+            mobileSection.classList.add('hidden');
+            document.getElementById('cash_amount').value = totalValue.toFixed(2);
+            document.getElementById('mobile_money_amount').value = '0';
+        } else if (method === 'mobile_money') {
+            cashSection.classList.add('hidden');
+            mobileSection.classList.remove('hidden');
+            document.getElementById('cash_amount').value = '0';
+            document.getElementById('mobile_money_amount').value = totalValue.toFixed(2);
+        } else if (method === 'both') {
+            cashSection.classList.remove('hidden');
+            mobileSection.classList.remove('hidden');
+            const cashAmount = parseFloat(document.getElementById('cash_amount').value) || 0;
+            const mobileAmount = parseFloat(document.getElementById('mobile_money_amount').value) || 0;
+            if (cashAmount === 0 && mobileAmount === 0) {
+                const half = totalValue / 2;
+                document.getElementById('cash_amount').value = half.toFixed(2);
+                document.getElementById('mobile_money_amount').value = half.toFixed(2);
+            }
+        }
+        
+        updateTotalPayment();
+    }
+
+    // Update total payment display
+    function updateTotalPayment() {
+        const cashAmount = parseFloat(document.getElementById('cash_amount').value) || 0;
+        const mobileAmount = parseFloat(document.getElementById('mobile_money_amount').value) || 0;
+        const total = cashAmount + mobileAmount;
+        
+        document.getElementById('totalPayment').textContent = `KES ${total.toFixed(2)}`;
+    }
+
+    // Update remove buttons visibility
+    function updateRemoveButtonsVisibility() {
+        const rows = document.querySelectorAll('.product-row');
+        const removeButtons = document.querySelectorAll('.remove-product');
+        
+        removeButtons.forEach(button => {
+            if (rows.length > 1) {
+                button.classList.remove('hidden');
+            } else {
+                button.classList.add('hidden');
+            }
+        });
+    }
+
+    // Update the hidden product data field
+    function updateProductData() {
+        const productData = [];
+        
+        document.querySelectorAll('.product-row').forEach(row => {
+            const productSelect = row.querySelector('.product-select');
+            const quantityInput = row.querySelector('.quantity-input');
+            const priceInput = row.querySelector('.price-input');
+            
+            if (productSelect.value) {
+                productData.push({
+                    product_id: productSelect.value,
+                    product_name: productSelect.options[productSelect.selectedIndex].text,
+                    quantity: parseInt(quantityInput.value),
+                    selling_price: parseFloat(priceInput.value),
+                    total_price: parseInt(quantityInput.value) * parseFloat(priceInput.value)
+                });
+            }
+        });
+        
+        document.getElementById('productData').value = JSON.stringify(productData);
+    }
+
+    // Update product data on any change
+    document.addEventListener('input', function() {
+        updateProductData();
     });
 </script>
 {% endblock %}

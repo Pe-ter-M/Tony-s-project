@@ -1,0 +1,87 @@
+{% extends "store/base.html" %}
+{% block title %}Stock Out Submission{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Stock Out Submission</h1>
+        <p class="text-gray-600 mt-2">Submitted stock out data</p>
+    </div>
+
+    <!-- Submission Data Card -->
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="bg-green-600 px-6 py-4">
+            <h2 class="text-xl font-semibold text-white">Stock Out Data Received</h2>
+        </div>
+
+        <div class="p-6">
+            <!-- Customer Information -->
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-3">Customer Information</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <span class="text-gray-600 font-medium">Customer:</span>
+                        <span class="ml-2">{{ data.customer }}</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-600 font-medium">Notes:</span>
+                        <span class="ml-2">{{ data.notes }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Table -->
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-3">Products to Sell</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="py-2 px-4 border-b border-gray-200 text-left text-gray-600 font-semibold">Product Name</th>
+                                <th class="py-2 px-4 border-b border-gray-200 text-left text-gray-600 font-semibold">Quantity</th>
+                                <th class="py-2 px-4 border-b border-gray-200 text-left text-gray-600 font-semibold">Price (KES)</th>
+                                <th class="py-2 px-4 border-b border-gray-200 text-left text-gray-600 font-semibold">Total (KES)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in data.products %}
+                            <tr class="hover:bg-gray-50">
+                                <td class="py-2 px-4 border-b border-gray-200">{{ product.name }}</td>
+                                <td class="py-2 px-4 border-b border-gray-200">{{ product.quantity }}</td>
+                                <td class="py-2 px-4 border-b border-gray-200">{{ "%.2f"|format(product.price) }}</td>
+                                <td class="py-2 px-4 border-b border-gray-200 font-semibold">{{ "%.2f"|format(product.total) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot class="bg-gray-50">
+                            <tr>
+                                <td class="py-3 px-4 border-t border-gray-200 font-semibold">Total</td>
+                                <td class="py-3 px-4 border-t border-gray-200 font-semibold">{{ data.total_quantity }}</td>
+                                <td class="py-3 px-4 border-t border-gray-200"></td>
+                                <td class="py-3 px-4 border-t border-gray-200 font-semibold text-green-600">KES {{ "%.2f"|format(data.total_sale) }}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row items-center justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-200">
+                <a href="{{ url_for('store.stock_out') }}"
+                    class="w-full sm:w-auto bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline transition duration-300 text-center">
+                    Back to Stock Out
+                </a>
+                <a href="{{ url_for('store.stock_out_history') }}"
+                    class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline transition duration-300 text-center">
+                    View Stock History
+                </a>
+                <a href="{{ url_for('store.index') }}"
+                    class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline transition duration-300 text-center">
+                    Go to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
