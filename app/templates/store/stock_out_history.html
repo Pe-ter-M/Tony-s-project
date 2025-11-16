@@ -56,121 +56,225 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Total Transactions</p>
-                    <p class="text-2xl font-bold text-gray-900" data-format="number"
-                        data-value="{{ stock_outs|length }}">
-                        {{ stock_outs|length }}
+                    <p class="text-2xl font-bold text-gray-900">
+                        {{ single_sales|length + multi_sales|length }}
                     </p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Stock Out Table -->
-    <!-- Stock Out Table -->
-    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
-        <div class="bg-red-600 px-6 py-4">
-            <h2 class="text-xl font-semibold text-white">Sales Records</h2>
+    <!-- Tabs for Single vs Multi-Product Sales -->
+    <div class="mb-6">
+        <div class="border-b border-gray-200">
+            <nav class="-mb-px flex space-x-8">
+                <button id="allTab"
+                    class="tab-button py-2 px-1 border-b-2 border-red-500 font-medium text-sm text-red-600"
+                    data-tab="all">
+                    All Sales
+                </button>
+                <button id="singleTab"
+                    class="tab-button py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    data-tab="single">
+                    Single Product
+                </button>
+                <button id="multiTab"
+                    class="tab-button py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    data-tab="multi">
+                    Multi-Product
+                </button>
+            </nav>
         </div>
+    </div>
 
-        <div class="p-6">
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Product</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Date</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Quantity</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Buying Price</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Selling Price</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Total Sale</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Profit per Unit</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Total Profit</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Profit Margin</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Customer</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Sold By</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        {% for stock_out in stock_outs %}
-                        {% set profit_per_unit = (stock_out.profit / stock_out.quantity_sold) if stock_out.quantity_sold
-                        > 0 else 0 %}
-                        {% set profit_margin = (profit_per_unit / stock_out.selling_price * 100) if
-                        stock_out.selling_price > 0 else 0 %}
-                        <tr class="hover:bg-gray-50 transition duration-150">
-                            <td class="px-4 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">{{ stock_out.product.name }}</div>
-                            </td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ stock_out.date_sold.strftime('%Y-%m-%d %H:%M') }}
-                            </td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                                <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium"
-                                    data-format="number" data-value="{{ stock_out.quantity_sold }}">
-                                    {{ stock_out.quantity_sold }} units
-                                </span>
-                            </td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900" data-format="currency"
-                                data-value="{{ stock_out.buying_price if stock_out.buying_price is defined else (stock_out.selling_price - profit_per_unit) }}">
-                                KES {{ "%.2f"|format(stock_out.buying_price if stock_out.buying_price is defined else
-                                (stock_out.selling_price - profit_per_unit)) }}
-                            </td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900" data-format="currency"
-                                data-value="{{ stock_out.selling_price }}">
-                                KES {{ "%.2f"|format(stock_out.selling_price) }}
-                            </td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold"
-                                data-format="currency" data-value="{{ stock_out.total_sale }}">
-                                KES {{ "%.2f"|format(stock_out.total_sale) }}
-                            </td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold {% if profit_per_unit >= 0 %}text-green-600{% else %}text-red-600{% endif %}"
-                                data-format="currency" data-value="{{ profit_per_unit }}">
-                                KES {{ "%.2f"|format(profit_per_unit) }}
-                            </td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold {% if stock_out.profit >= 0 %}text-green-600{% else %}text-red-600{% endif %}"
-                                data-format="currency" data-value="{{ stock_out.profit }}">
-                                KES {{ "%.2f"|format(stock_out.profit) }}
-                            </td>
-                            <td
-                                class="px-4 py-4 whitespace-nowrap text-sm font-semibold {% if profit_margin >= 0 %}text-green-600{% else %}text-red-600{% endif %}">
-                                {{ "%.1f"|format(profit_margin) }}%
-                            </td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ stock_out.customer_info or 'N/A' }}
-                            </td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ stock_out.user.username }}
-                            </td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">
-                                <a href="{{ url_for('store.receipt', stock_out_id=stock_out.id) }}" target="_blank"
-                                    class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-xs transition duration-300 no-print">
-                                    <i class="fas fa-receipt mr-1"></i>Receipt
-                                </a>
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="12" class="px-4 py-8 text-center text-gray-500">
-                                <i class="fas fa-shopping-cart text-4xl text-gray-300 mb-2"></i>
-                                <p class="text-lg">No sales records found</p>
-                                <p class="text-sm">Make some sales to see history</p>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+    <!-- Single Product Sales Table -->
+    <div id="singleSalesSection" class="sales-section">
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
+            <div class="bg-blue-600 px-6 py-4">
+                <h2 class="text-xl font-semibold text-white">Single Product Sales</h2>
+            </div>
+
+            <div class="p-6">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Product</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Date</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Quantity</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Selling Price</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Total Sale</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Profit</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Customer</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Sold By</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for sale in single_sales %}
+                            <tr class="hover:bg-gray-50 transition duration-150">
+                                <td class="px-4 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">{{ sale.product.name }}</div>
+                                </td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ sale.date_sold.strftime('%Y-%m-%d %H:%M') }}
+                                </td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
+                                        {{ sale.quantity_sold }} units
+                                    </span>
+                                </td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    KES {{ "%.2f"|format(sale.selling_price) }}
+                                </td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">
+                                    KES {{ "%.2f"|format(sale.total_sale) }}
+                                </td>
+                                <td
+                                    class="px-4 py-4 whitespace-nowrap text-sm font-semibold {% if sale.profit >= 0 %}text-green-600{% else %}text-red-600{% endif %}">
+                                    KES {{ "%.2f"|format(sale.profit) }}
+                                </td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ sale.customer_info or 'N/A' }}
+                                </td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ sale.user.username }}
+                                </td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">
+                                    <a href="{{ url_for('store.receipt', stock_out_id=sale.id) }}" target="_blank"
+                                        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-xs transition duration-300">
+                                        <i class="fas fa-receipt mr-1"></i>Receipt
+                                    </a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="9" class="px-4 py-8 text-center text-gray-500">
+                                    <i class="fas fa-box text-4xl text-gray-300 mb-2"></i>
+                                    <p class="text-lg">No single product sales</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Multi-Product Sales Table -->
+    <div id="multiSalesSection" class="sales-section hidden">
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+            <div class="bg-green-600 px-6 py-4">
+                <h2 class="text-xl font-semibold text-white">Multi-Product Sales</h2>
+            </div>
+
+            <div class="p-6">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Sale Reference</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Date</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Customer</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Payment Method</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Total Products</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Total Quantity</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Total Sale</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Total Profit</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Sold By</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <!-- In the multi-sales table body -->
+                            {% for sale in multi_sales %}
+                            {% set sale_totals = get_sale_totals(sale.sale_reference) %}
+                            <tr class="hover:bg-gray-50 transition duration-150">
+                                <td class="px-4 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">{{ sale.sale_reference }}</div>
+                                </td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ sale.date_sold.strftime('%Y-%m-%d %H:%M') }}
+                                </td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ sale.customer_name }}
+                                </td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    <span
+                                        class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs font-medium capitalize">
+                                        {{ sale.payment_method.replace('_', ' ') }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    <span
+                                        class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
+                                        {{ sale_totals.product_count }} products
+                                    </span>
+                                </td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ sale_totals.quantity }} units
+                                </td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">
+                                    KES {{ "%.2f"|format(sale.total_sale) }}
+                                </td>
+                                <td
+                                    class="px-4 py-4 whitespace-nowrap text-sm font-semibold {% if sale.profit >= 0 %}text-green-600{% else %}text-red-600{% endif %}">
+                                    KES {{ "%.2f"|format(sale.profit) }}
+                                </td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ sale.user.username }}
+                                </td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">
+                                    <a href="{{ url_for('store.multi_product_receipt', sale_reference=sale.sale_reference) }}"
+                                        target="_blank"
+                                        class="bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-xs transition duration-300">
+                                        <i class="fas fa-receipt mr-1"></i>Receipt
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -179,65 +283,47 @@
 
 {% block scripts %}
 <script>
-    // Number formatting functions
-    function formatNumber(number) {
-        if (number === null || number === undefined || isNaN(number)) return '0';
-        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
-
-    function formatCurrency(amount) {
-        if (amount === null || amount === undefined || isNaN(amount)) return 'KES 0.00';
-
-        const number = parseFloat(amount);
-
-        // Handle very small numbers and zero
-        if (number === 0) return 'KES 0.00';
-
-        // Split into integer and decimal parts
-        const parts = number.toFixed(2).split('.');
-        const integerPart = parts[0];
-        const decimalPart = parts[1];
-
-        // Add commas to integer part
-        const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-        return 'KES ' + formattedInteger + '.' + decimalPart;
-    }
-
-    function formatAllNumbers() {
-        // Format numbers
-        document.querySelectorAll('[data-format="number"]').forEach(element => {
-            const rawValue = element.getAttribute('data-value');
-            if (rawValue) {
-                const value = parseFloat(rawValue);
-                if (!isNaN(value)) {
-                    const currentText = element.textContent;
-                    const numericMatch = currentText.match(/(\d+)/);
-                    if (numericMatch) {
-                        element.textContent = currentText.replace(numericMatch[0], formatNumber(value));
-                    } else {
-                        element.textContent = formatNumber(value) + ' units';
-                    }
-                }
-            }
-        });
-
-        // Format currency
-        document.querySelectorAll('[data-format="currency"]').forEach(element => {
-            const rawValue = element.getAttribute('data-value');
-            if (rawValue) {
-                const value = parseFloat(rawValue);
-                if (!isNaN(value)) {
-                    element.textContent = formatCurrency(value);
-                }
-            }
-        });
-    }
-
-    // Apply formatting when page loads
     document.addEventListener('DOMContentLoaded', function () {
-        console.log('Formatting numbers on Stock Out History page...');
-        formatAllNumbers();
+        // Tab functionality
+        const tabs = document.querySelectorAll('.tab-button');
+        const sections = document.querySelectorAll('.sales-section');
+
+        // Show all sections by default
+        showTab('all');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function () {
+                const tabName = this.getAttribute('data-tab');
+
+                // Update tab styles
+                tabs.forEach(t => {
+                    t.classList.remove('border-red-500', 'text-red-600');
+                    t.classList.add('border-transparent', 'text-gray-500');
+                });
+
+                this.classList.add('border-red-500', 'text-red-600');
+                this.classList.remove('border-transparent', 'text-gray-500');
+
+                // Show/hide sections
+                showTab(tabName);
+            });
+        });
+
+        function showTab(tabName) {
+            sections.forEach(section => {
+                section.classList.add('hidden');
+            });
+
+            if (tabName === 'all') {
+                sections.forEach(section => {
+                    section.classList.remove('hidden');
+                });
+            } else if (tabName === 'single') {
+                document.getElementById('singleSalesSection').classList.remove('hidden');
+            } else if (tabName === 'multi') {
+                document.getElementById('multiSalesSection').classList.remove('hidden');
+            }
+        }
     });
 </script>
 {% endblock %}

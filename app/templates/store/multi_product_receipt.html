@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt - {{ sale_header.sale_reference }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-4">
+    <div class="max-w-md mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+        <!-- Receipt Header -->
+        <div class="bg-red-600 text-white p-6 text-center">
+            <h1 class="text-2xl font-bold">{{ shop_name }}</h1>
+            <p class="text-sm opacity-90">{{ shop_location }}</p>
+            <p class="text-sm opacity-90">{{ shop_phone }} | {{ shop_email }}</p>
+        </div>
+
+        <!-- Receipt Content -->
+        <div class="p-6">
+            <!-- Sale Info -->
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="font-semibold">Receipt #:</span>
+                    <span>{{ sale_header.sale_reference }}</span>
+                </div>
+                <div class="flex justify-between items-center mb-2">
+                    <span class="font-semibold">Date:</span>
+                    <span>{{ sale_header.date_sold.strftime('%Y-%m-%d %H:%M') }}</span>
+                </div>
+                <div class="flex justify-between items-center mb-2">
+                    <span class="font-semibold">Customer:</span>
+                    <span>{{ sale_header.customer_name }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="font-semibold">Payment Method:</span>
+                    <span class="capitalize">{{ sale_header.payment_method.replace('_', ' ') }}</span>
+                </div>
+            </div>
+
+            <!-- Products Table -->
+            <div class="mb-6">
+                <h3 class="font-semibold text-lg mb-3 border-b pb-2">Products Sold</h3>
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b">
+                            <th class="text-left pb-2">Product</th>
+                            <th class="text-right pb-2">Qty</th>
+                            <th class="text-right pb-2">Price</th>
+                            <th class="text-right pb-2">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                        <tr class="border-b">
+                            <td class="py-2">{{ product.product.name }}</td>
+                            <td class="text-right py-2">{{ product.quantity_sold }}</td>
+                            <td class="text-right py-2">KES {{ "%.2f"|format(product.selling_price) }}</td>
+                            <td class="text-right py-2">KES {{ "%.2f"|format(product.total_sale) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Totals -->
+            <div class="border-t pt-4">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="font-semibold">Total Products:</span>
+                    <span>{{ totals.product_count }}</span>
+                </div>
+                <div class="flex justify-between items-center mb-2">
+                    <span class="font-semibold">Total Quantity:</span>
+                    <span>{{ totals.quantity }}</span>
+                </div>
+                <div class="flex justify-between items-center mb-2">
+                    <span class="font-semibold">Subtotal:</span>
+                    <span>KES {{ "%.2f"|format(totals.amount) }}</span>
+                </div>
+                {% if sale_header.payment_method == 'both' %}
+                <div class="flex justify-between items-center mb-2">
+                    <span class="font-semibold">Cash Paid:</span>
+                    <span>KES {{ "%.2f"|format(sale_header.cash_amount) }}</span>
+                </div>
+                <div class="flex justify-between items-center mb-2">
+                    <span class="font-semibold">Mobile Money:</span>
+                    <span>KES {{ "%.2f"|format(sale_header.mobile_money_amount) }}</span>
+                </div>
+                {% endif %}
+                <div class="flex justify-between items-center text-lg font-bold border-t pt-2 mt-2">
+                    <span>TOTAL:</span>
+                    <span>KES {{ "%.2f"|format(totals.amount) }}</span>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="mt-6 text-center text-gray-600">
+                <p class="text-sm">Thank you for your business!</p>
+                <p class="text-xs mt-2">Sold by: {{ sale_header.user.username }}</p>
+                <p class="text-xs">Receipt generated on: {{ now.strftime('%Y-%m-%d %H:%M') }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Print Button -->
+    <div class="max-w-md mx-auto mt-4 no-print">
+        <button onclick="window.print()" 
+                class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300">
+            <i class="fas fa-print mr-2"></i>Print Receipt
+        </button>
+        <a href="{{ url_for('store.stock_out_history') }}" 
+           class="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 block text-center mt-2">
+            <i class="fas fa-arrow-left mr-2"></i>Back to History
+        </a>
+    </div>
+
+    <script>
+        // Add current timestamp
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const timestampElement = document.querySelector('[data-timestamp]');
+            if (timestampElement) {
+                timestampElement.textContent = now.toLocaleString();
+            }
+        });
+    </script>
+</body>
+</html>

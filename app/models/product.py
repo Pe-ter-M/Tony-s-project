@@ -41,23 +41,30 @@ class StockIn(db.Model):
         prod = getattr(self, "product", None)
         name = getattr(prod, "name", "<no product>")
         return f'<StockIn {self.quantity} of {name}>'
-
 class StockOut(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     quantity_sold = db.Column(db.Integer, nullable=False)
-    selling_price = db.Column(db.Float, nullable=False)  # Use existing selling_price column for actual sale price
-    total_sale = db.Column(db.Float, nullable=False)  # quantity_sold * selling_price
-    profit = db.Column(db.Float, nullable=False)  # Auto-calculated profit (selling_price - buying_cost) * quantity
+    selling_price = db.Column(db.Float, nullable=False)
+    total_sale = db.Column(db.Float, nullable=False)
+    profit = db.Column(db.Float, nullable=False)
     date_sold = db.Column(db.DateTime, default=datetime.utcnow)
-    customer_info = db.Column(db.String(200))
+    customer_info = db.Column(db.String(200))  # For single product sales (backward compatible)
     notes = db.Column(db.Text)
     
     # Foreign Keys
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     
+    # NEW FIELDS for multi-product sales
+    sale_reference = db.Column(db.String(50), nullable=True, index=True)  # NULL for single products
+    is_multi_product = db.Column(db.Boolean, default=False)  # False for single products
+    customer_name = db.Column(db.String(200), default='Customer X')  # For multi-product sales
+    payment_method = db.Column(db.String(20))  # 'cash', 'mobile_money', 'both', NULL for single
+    cash_amount = db.Column(db.Float, default=0.0)
+    mobile_money_amount = db.Column(db.Float, default=0.0)
+    
     def __init__(self, **kwargs):
-        super(StockOut, self).__init__(**kwargs) 
+        super(StockOut, self).__init__(**kwargs)
 
     def calculate_profit(self, buying_cost):
         """Calculate profit based on buying cost and selling price (SP - BP) * quantity"""
@@ -66,10 +73,21 @@ class StockOut(db.Model):
     def calculate_total_sale(self):
         self.total_sale = self.quantity_sold * self.selling_price
     
+    def is_single_product_sale(self):
+        """Check if this is a single product sale"""
+        return not self.is_multi_product
+    
+    def get_sale_type(self):
+        """Get sale type description"""
+        return "Multi-Product" if self.is_multi_product else "Single Product"
+    
     def __repr__(self):
-        prod = getattr(self, "product", None)
-        name = getattr(prod, "name", "<no product>")
-        return f'<StockOut {self.quantity_sold} of {name}>'
+        if self.is_multi_product:
+            return f'<StockOut Sale #{self.sale_reference}: {self.customer_name}>'
+        else:
+            prod = getattr(self, "product", None)
+            name = getattr(prod, "name", "<no product>")
+            return f'<StockOut {self.quantity_sold} of {name}>'
 
 class Inventory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
